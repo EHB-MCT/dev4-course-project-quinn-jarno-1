@@ -15,7 +15,7 @@ class ItemController {
     lateinit var itemService: ItemService;
 
     @GetMapping
-    fun index(): List<Item> {
+    fun getItems(): List<Item> {
         val items = itemService.getAllItems();
         return items;
     }
