@@ -12,5 +12,10 @@ data class Loan(
     val loanDate: LocalDateTime = LocalDateTime.now(),
     val dueDate: LocalDateTime,
     var returned: Boolean = false,
+
+    @ManyToOne
+    val user: User,
+    @OneToOne
+    val item: Item,
 ){
 }
