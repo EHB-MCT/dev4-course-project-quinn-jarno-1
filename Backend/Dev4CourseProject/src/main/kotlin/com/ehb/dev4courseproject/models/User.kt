@@ -8,8 +8,9 @@ data class User(
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = -1,
 
-    var username: String = "",
-    var email: String = "",
-    var password: String = "",
+    var username: String?,
+    var email: String?,
+    var password: String?,
+    var role: String?
 ){}
 
