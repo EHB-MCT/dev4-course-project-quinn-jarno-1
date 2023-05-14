@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.*
 import com.ehb.dev4courseproject.models.User
 import com.ehb.dev4courseproject.services.UserService
 import com.ehb.dev4courseproject.dto.CreateUserRequest
+import com.ehb.dev4courseproject.dto.LoginUserRequest
 
 @RestController
 @RequestMapping("users")
@@ -48,5 +49,12 @@ class UserController {
     @DeleteMapping("/{userId}")
     fun deleteUser(@PathVariable userId: Long): User {
        return userService.deleteUser(userId)
+    }
+
+    // Login User
+    @RequestMapping("/login")
+    @PostMapping
+    fun loginUser(@RequestBody userRequest: LoginUserRequest): String? {
+        return userService.loginUser(userRequest)
     }
 }

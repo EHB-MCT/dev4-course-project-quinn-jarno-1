@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service
 import com.ehb.dev4courseproject.models.User
 import com.ehb.dev4courseproject.repositories.UserRepository
 import com.ehb.dev4courseproject.dto.CreateUserRequest
+import com.ehb.dev4courseproject.dto.LoginUserRequest
 import com.ehb.dev4courseproject.repositories.LoanRepository
 
 @Service
@@ -54,6 +55,34 @@ class UserService {
             return user.get()
         } else {
             throw EntityNotFoundException("User with id $userId not found")
+        }
+    }
+
+    // User Login
+    fun loginUser(user: LoginUserRequest): String? {
+        val u = userRepository.findByUsername(user.username)
+        if(u != null) {
+            if(user.password == u.password) {
+                u.accessToken = java.util.UUID.randomUUID().toString()
+                //Setting expiration date to 1 day
+                //(Millis * seconds * minutes * hours * days)
+                u.expirationDate =  System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 1)
+                userRepository.save(u)
+                return u.accessToken
+            } else {
+                return null
+            }
+        } else {
+            return null
+        }
+    }
+
+    fun isAuthenticated(token: String): Boolean {
+        val u = userRepository.findByAccessToken(token)
+        if(u != null) {
+            return u.expirationDate > System.currentTimeMillis()
+        } else {
+            return false
         }
     }
 }
