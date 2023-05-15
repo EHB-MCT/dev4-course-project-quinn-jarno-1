@@ -1,22 +1,20 @@
-<!-- EEN ITEM COMPONENT -->
+<template>
+    <div class="item">
+        <h4>{{ name }}</h4>
+        <h5>{{ description }}</h5>
+        <p>{{ isLoanedOut }}</p>
+    </div>
+</template>
 
 <script>
     export default {
         props: {
             name: String,
             description: String,
-            isLoanedOut: Boolean,
+            isLoanedOut: Boolean
         }
     }
 </script>
-
-<template>
-    <div class="item">
-        <h4>{{ name }}</h4>
-        <p>{{ description }}</p>
-        <p>{{ isLoanedOut }}</p>
-    </div>
-</template>
 
 <style scoped>
     .item {
