@@ -1,21 +1,33 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+  import { RouterView } from 'vue-router'
+  // import HelloWorld from './components/BannerComponent.vue'
+  // import ItemsComponent from './components/ItemsComponent.vue'
+  // import UsersComponent from './components/UsersComponent.vue'
+  // import LoginComponent from './components/LoginComponent.vue'
 </script>
 
 <template>
+  <div id="app">
+    <router-view></router-view>
+  </div>
+</template>
+
+
+<!-- <template>
   <header>
-    <img alt="Vue logo" class="logo" src="./assets/logo.svg" width="125" height="125" />
+    <img alt="Vue logo" class="logo" src="./assets/ehblogo.jpg" width="225" height="225" />
 
     <div class="wrapper">
-      <HelloWorld msg="You did it!" />
+      <HelloWorld msg="Medialab Loan Application" />
     </div>
   </header>
 
-  <main>
-    <TheWelcome />
+  <main>  
+    <LoginComponent/>
+    <ItemsComponent/>
+    <UsersComponent/>
   </main>
-</template>
+</template> -->
 
 <style scoped>
 header {
