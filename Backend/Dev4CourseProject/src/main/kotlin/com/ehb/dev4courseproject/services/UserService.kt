@@ -85,4 +85,9 @@ class UserService {
             return false
         }
     }
+
+    fun getUserByToken(token: String): User? {
+        return userRepository.findByAccessToken(token)
+    }
+
 }

@@ -28,6 +28,12 @@ class UserController {
         return userService.getUser(userId)
     }
 
+    // Gets One User By ID
+    @GetMapping("token/{token}")
+    fun getUser(@PathVariable token: String): User? {
+        return userService.getUserByToken(token)
+    }
+
     // Create A New User
     @PostMapping
     fun saveUser(@RequestBody userRequest: CreateUserRequest): User {
