@@ -8,6 +8,7 @@ import com.ehb.dev4courseproject.services.UserService
 import com.ehb.dev4courseproject.dto.CreateUserRequest
 import com.ehb.dev4courseproject.dto.LoginUserRequest
 
+@CrossOrigin(origins = ["http://localhost:5173"])
 @RestController
 @RequestMapping("users")
 class UserController {

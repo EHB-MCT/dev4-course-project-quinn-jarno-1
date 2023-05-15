@@ -9,6 +9,7 @@ import com.ehb.dev4courseproject.dto.CreateItemRequest
 import com.ehb.dev4courseproject.dto.CreateUserRequest
 import com.ehb.dev4courseproject.models.User
 
+@CrossOrigin(origins = ["http://localhost:5173"])
 @RestController
 @RequestMapping("items")
 class ItemController {
