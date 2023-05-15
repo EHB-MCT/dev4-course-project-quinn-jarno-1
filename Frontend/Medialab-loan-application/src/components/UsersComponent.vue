@@ -11,23 +11,23 @@ mounted() {
     this.getUsers();
 },
 
- methods: {
-  getUsers(){
-    fetch('http://localhost:9000/users')
-    .then(response => response.json())
-    .then(data => {
-      this.users = data;
-      console.log(data);
-    })
-    .catch(error => {
-    console.error(error);
-    });
+  methods: {
+    getUsers(){
+      fetch('http://localhost:9000/users')
+      .then(response => response.json())
+      .then(data => {
+        this.users = data;
+        console.log(data);
+      })
+      .catch(error => {
+      console.error(error);
+      });
+    }
+  },
+  updated() {
+    console.log(this.users);
   }
-},
-updated() {
-  console.log(this.users);
- }
-  }
+}
 
 </script>
 
