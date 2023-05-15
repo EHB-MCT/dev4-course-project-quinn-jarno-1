@@ -11,6 +11,9 @@ data class User(
     var username: String?,
     var email: String?,
     var password: String?,
-    var role: String?
-){}
+    var role: String?,
+){
+    var accessToken = ""
+    var expirationDate = System.currentTimeMillis()
+}
 
