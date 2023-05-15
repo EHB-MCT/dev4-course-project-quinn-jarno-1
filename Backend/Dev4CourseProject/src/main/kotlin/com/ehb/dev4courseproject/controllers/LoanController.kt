@@ -9,7 +9,7 @@ import com.ehb.dev4courseproject.services.LoanService
 import com.ehb.dev4courseproject.services.UserService
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
-import java.net.http.HttpHeaders
+import org.springframework.http.HttpHeaders
 
 @CrossOrigin(origins = ["http://localhost:5173"])
 @RestController
@@ -18,6 +18,9 @@ class LoanController {
 
     @Autowired
     lateinit var loanService: LoanService;
+
+    @Autowired
+    lateinit var userService: UserService;
 
     // Get All Loans
     @GetMapping
@@ -28,8 +31,8 @@ class LoanController {
 
     // Create A New Loan
     @PostMapping
-    fun loanItem(@RequestBody loanRequest: NewLoanRequest, @RequestHeader(HttpHeaders.AUTHORIZATION) token: String): Loan {
-        if(UserService.isAuthenticated(token)){
+    fun loanItem(@RequestHeader(HttpHeaders.AUTHORIZATION) token: String, @RequestBody loanRequest: NewLoanRequest): Loan {
+        if(userService.isAuthenticated(token)){
             return loanService.newLoan(loanRequest)
         } else {
             throw ResponseStatusException(HttpStatus.UNAUTHORIZED, "Authentication token not present / allowed")
