@@ -1,10 +1,19 @@
 <script setup>
-import HelloWorld from './components/BannerComponent.vue'
-import app from './components/ItemsComponent.vue'
-import UsersComponent from './components/UsersComponent.vue'
+  import { RouterView } from 'vue-router'
+  // import HelloWorld from './components/BannerComponent.vue'
+  // import ItemsComponent from './components/ItemsComponent.vue'
+  // import UsersComponent from './components/UsersComponent.vue'
+  // import LoginComponent from './components/LoginComponent.vue'
 </script>
 
 <template>
+  <div id="app">
+    <router-view></router-view>
+  </div>
+</template>
+
+
+<!-- <template>
   <header>
     <img alt="Vue logo" class="logo" src="./assets/ehblogo.jpg" width="225" height="225" />
 
@@ -14,10 +23,11 @@ import UsersComponent from './components/UsersComponent.vue'
   </header>
 
   <main>  
-    <app/>
+    <LoginComponent/>
+    <ItemsComponent/>
     <UsersComponent/>
   </main>
-</template>
+</template> -->
 
 <style scoped>
 header {
