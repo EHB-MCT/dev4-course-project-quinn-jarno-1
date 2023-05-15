@@ -3,27 +3,27 @@
 export default {
 
 data() {
+  return {
 
-return {
+  items: [],
+  user: [],
+  selectedItemId: null,
+        updatedItem: {
+          id: null,
+          name: "",
+          description: "",
+          isLoanedOut: false
+        }
 
- items: [],
- selectedItemId: null,
-      updatedItem: {
-        id: null,
-        name: "",
-        description: "",
-        isLoanedOut: false
-      }
-
- }
+  }
 },
 
 mounted() {
-
- this.getItems();
-
- },
+  this.getItems();
+  this.getUser();
+},
  methods: {
+  // Gets All Items
   getItems(){
     fetch('http://localhost:9000/items')
     .then(response => response.json())
@@ -36,6 +36,44 @@ mounted() {
     });
   },
 
+  // Get Logged In User
+  getUser() {
+    fetch(`http://localhost:9000/users/token/${localStorage.getItem('authToken')}`)
+      .then(response => response.json())
+      .then(data => {
+        this.user = data;
+        console.log(data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  },
+
+  // Lend out an item
+  loanItem(userId, itemId){
+    const token = localStorage.getItem('authToken');
+    fetch('http://localhost:9000/loans', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `${token}`
+      },
+      body: JSON.stringify({userId: userId, itemId: itemId}),
+    })
+      .then(response => {
+        if (response.ok) {
+          console.log("SUCCES" + response)
+          return response.text();
+        } else {
+          throw new Error(`Invalid credentials ${userId} ${itemId} ${token}`);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  },
+
+  // Delete Item
   deleteItem(itemId) {
     fetch(`http://localhost:9000/items/${itemId}`, {
       method: 'DELETE',
@@ -50,13 +88,14 @@ mounted() {
           this.items.splice(index, 1);
         }
       } else {
-        console.error('Item deletion failed.');
+        console.error('Item deletion failed: Item may be Loaned Out');
       }
     }).catch(error => {
         console.error(error);
       });
   },
 
+  // Edit Item
   editItem(item) {
       this.selectedItemId = item.id;
       this.updatedItem = { ...item };
@@ -97,6 +136,7 @@ mounted() {
       };
 
  },
+ // this doesnt get updated through the updateItem method but through the create loan method
  setLoanStatus(isLoanedOut) {
       this.updatedItem.isLoanedOut = isLoanedOut;
     }
@@ -118,13 +158,13 @@ mounted() {
             <li v-for="item in items" v-bind:key="item">
               <h3>{{ item.name }}</h3>
               <p>{{ item.description }}</p>
-              <span v-if="item.isLoanedOut">Reserved: True</span>
-              <span v-else>Reserved: False</span>
+              <span class="unavailable" v-if="item.isLoanedOut">Unavailable</span>
+              <span class="available" v-else>Available</span>
               <button class="update-button" @click="editItem(item)">Update</button>
               <div v-if="item.id === selectedItemId" class="edit-form">
                 <input v-model="updatedItem.name" type="text" placeholder="Name" />
                 <textarea v-model="updatedItem.description" placeholder="Description"></textarea>
-                <div class="loan-status">
+                <!-- <div class="loan-status">
         <button
           :class="{ active: updatedItem.isLoanedOut }"
           @click="setLoanStatus(true)"
@@ -137,13 +177,14 @@ mounted() {
         >
           Available
         </button>
-      </div>
+      </div> -->
                 <div class="form-buttons">
                 <button class="save-button" @click="updateItem">Save</button>
                 <button class="cancel-button" @click="cancelEdit">Cancel</button>
                 </div>
                 </div>
               <button class="delete-button" @click="deleteItem(item.id)">Delete</button>
+              <button class="delete-button" @click="loanItem(user.id, item.id)">Lend Out</button>
               <hr>
             </li>
           </ul>
@@ -254,5 +295,15 @@ mounted() {
   padding: 8px 12px;
   border-radius: 3px;
   cursor: pointer;
+}
+
+.unavailable {
+  color: red;
+  font-weight: bold;
+}
+
+.available {
+  color: green;
+  font-weight: bold;
 }
   </style>
