@@ -19,34 +19,31 @@ mounted() {
  methods: {
   getItems(){
     fetch('http://localhost:9000/items')
- .then(response => response.json())
-.then(data => {
-
-this.items = data;
- console.log(data);
-})
-
- .catch(error => {
-
- console.error(error);
-
- });
+    .then(response => response.json())
+    .then(data => {
+      this.items = data;
+      console.log(data);
+    })
+    .catch(error => {
+    console.error(error);
+    });
   },
 
-  deleteItem(item) {
-    fetch(`http://localhost:9000/items/${item.id}`, { method: 'DELETE' })
- .then(response => response.json())
- .then(response => {
-          if (response.ok) {
-           return response
-           } else {
-             console.error('Failed to delete ITEM');
-          }
-       })
-         .catch(error => {
-           console.error(error);
-  });
+  deleteItem(itemId) {
+    fetch(`http://localhost:9000/items/${itemId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        console.log(response);
+      })
+      .catch(error => {
+        console.error(error);
+      });
   }
+
  },
 
  updated() {
