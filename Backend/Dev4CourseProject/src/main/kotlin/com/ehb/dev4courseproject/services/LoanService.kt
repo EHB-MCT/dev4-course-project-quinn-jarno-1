@@ -52,15 +52,4 @@ class LoanService() {
         loan.returned = true
         return loanRepository.save(loan)
     }
-
-    fun isAuthenticated(token: String): Boolean{
-        val u = UserRepository.findByAccessToken(token)
-        if(u != null) {
-            println("User found!")
-            return u.expirationDate > System.currentTimeMillis()
-        } else {
-            println("User not found!")
-            return false
-        }
-    }
 }
