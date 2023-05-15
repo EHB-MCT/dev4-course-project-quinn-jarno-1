@@ -1,71 +1,122 @@
-<!-- OVERVIEW VAN DE ITEMS -->
-
 <script>
-    export default {
-        data() {
-            return {
-                items: []
-            }
-        },
-        methods: {
-            log() {
-                console.log("Working");
-            },
-            async getData() {
-                const res = await fetch("http://localhost:9000/items");
-                const finalRes = await res.json();
-                this.items = finalRes.map(m => {
-                    let time  = new Date(m.time);
-                    m.time = `${time.getHours()}:${time.getMinutes()}`
-                    return m
-                });
-                //this.messages = finalRes;
-            }
-        },
-        mounted() {
-            this.getData();
-        }
-    }
+
+export default {
+
+data() {
+
+return {
+
+ items: []
+
+ }
+},
+
+mounted() {
+
+ this.getItems();
+
+ },
+ methods: {
+  getItems(){
+    fetch('http://localhost:9000/items')
+ .then(response => response.json())
+.then(data => {
+
+this.items = data;
+ console.log(data);
+})
+
+ .catch(error => {
+
+ console.error(error);
+
+ });
+  },
+
+  deleteItem(item) {
+    fetch(`http://localhost:9000/items/${item.id}`, { method: 'DELETE' })
+ .then(response => response.json())
+ .then(response => {
+          if (response.ok) {
+           return response
+           } else {
+             console.error('Failed to delete ITEM');
+          }
+       })
+         .catch(error => {
+           console.error(error);
+  });
+  }
+ },
+
+ updated() {
+  
+ console.log(this.items);
+}
+ }
+
 </script>
 
 <template>
+  <h2>Items overview</h2>
     <div class="item">
-        <div id="itemContainer">
-            <div v-bind="item in items" class="itemClass">
-                <h1>Test</h1>
-                 <div class="header">
-                    <h3 class="author">{{item.username}}</h3>
-                    <h3 class="time">{{item.time}}</h3>
-                </div>
-                <p>
-                    {{ item.item }}
-                </p>
-            </div>
-      </div>
+          <ul>
+            <li v-for="item in items" v-bind:key="item">
+              <h3>{{ item.name }}</h3>
+              <p>{{ item.description }}</p>
+              <span v-if="item.isLoanedOut">Reserved: True</span>
+              <span v-else>Reserved: False</span>
+              <button class="delete-button" @click="deleteItem(item.id)">Delete</button>
+              <hr>
+            </li>
+          </ul>
     </div>
-</template>
+    
+  </template>
+  <style>
+  ul {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  li {
+    margin-bottom: 20px;
+  }
+  
+  h2 {
+    font-size: 40px;
+    margin-bottom: 20px;
+    font-weight: bold;
+  }
+  
+  h3 {
+    font-size: 20px;
+    margin-bottom: 5px;
+    font-weight: bold;
+  }
+  
+  p {
+    margin-bottom: 10px;
+  }
+  
+  span {
+    font-weight: lighter;
+    margin-bottom: 5px;
+  }
 
-<style scoped>
-    #itemContainer {
-        overflow-y: scroll;
-        width: 100%;
-    }
+  .delete-button {
+  background-color: hsl(0, 0%, 0%);
+  color: rgb(255, 255, 255);
+  border: none;
+  padding: 8px 16px;
+  margin-left: 3px;
+  margin-bottom: -10px;
+  border-radius: 4px;
+  cursor: pointer;
+  float: right;
+}
 
-    .itemClass {
-        width: 80%;
-        padding: 20px;
-        color: #fff;
-        box-sizing: border-box;
-        background-color: #333;
-        border-radius: 5px;
-        margin: 10px;
-        float: left;
-    }
-    .own {
-        margin-left: 20%;
-        float: left;
-        background-color: #fefefe;
-        border: 1px solid #eee;
-        color: #333;
-    }
-</style>
+.delete-button:hover {
+  background-color: #a90000;
+}
+  </style>
