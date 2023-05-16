@@ -7,6 +7,7 @@ export default {
 
       items: [],
       users: [],
+      user: [],
       selectedItemId: null,
       updatedItem: {
         id: null,
@@ -42,6 +43,19 @@ export default {
         .then(response => response.json())
         .then(data => {
           this.users = data;
+          console.log(data);
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+
+      // Get Logged In User
+    getUser() {
+      fetch(`http://localhost:9000/users/token/${localStorage.getItem('authToken')}`)
+        .then(response => response.json())
+        .then(data => {
+          this.user = data;
           console.log(data);
         })
         .catch(error => {
@@ -181,39 +195,68 @@ export default {
 </script>
 
 <template>
-  <h2>Items overview</h2>
-  <div class="item">
-    <ul>
-      <li v-for="item in items" v-bind:key="item">
-        <h3>{{ item.name }}</h3>
-        <p>{{ item.description }}</p>
-        <span class="unavailable" v-if="item.isLoanedOut">Unavailable</span>
-        <span class="available" v-else>Available</span>
-        <button class="update-button" @click="editItem(item)">Update</button>
-        <div v-if="item.id === selectedItemId" class="edit-form">
-          <input v-model="updatedItem.name" type="text" placeholder="Name" />
-          <textarea v-model="updatedItem.description" placeholder="Description"></textarea>
-          <div class="form-buttons">
-            <button class="save-button" @click="updateItem">Save</button>
-            <button class="cancel-button" @click="cancelEdit">Cancel</button>
+  <div v-if="user && user.role === 'admin'">
+    <h2>Items overview</h2>
+    <div class="item">
+      <ul>
+        <li v-for="item in items" v-bind:key="item">
+          <h3>{{ item.name }}</h3>
+          <p>{{ item.description }}</p>
+          <span class="unavailable" v-if="item.isLoanedOut">Unavailable</span>
+          <span class="available" v-else>Available</span>
+          <button class="update-button" @click="editItem(item)">Update</button>
+          <div v-if="item.id === selectedItemId" class="edit-form">
+            <input v-model="updatedItem.name" type="text" placeholder="Name" />
+            <textarea v-model="updatedItem.description" placeholder="Description"></textarea>
+            <div class="form-buttons">
+              <button class="save-button" @click="updateItem">Save</button>
+              <button class="cancel-button" @click="cancelEdit">Cancel</button>
+            </div>
           </div>
-        </div>
-        <button class="delete-button" @click="deleteItem(item.id)">Delete</button>
-        <!-- <button class="delete-button" @click="loanItem(user.id, item.id)">Lend Out</button> -->
-        <hr>
-      </li>
-    </ul>
-  </div>
-
-  <h2>Users overview</h2>
-  <div class="item">
-    <ul>
-      <li v-for="user in users" v-bind:key="user">
-        <h3>{{ user.username }}</h3>
-        <p>{{ user.email }}</p>
-        <p>{{ user.role }}</p>
-        <hr>
-        <!-- <h3>{{ item.name }}</h3>
+          <button class="delete-button" @click="deleteItem(item.id)">Delete</button>
+          <!-- <button class="delete-button" @click="loanItem(user.id, item.id)">Lend Out</button> -->
+          <hr>
+        </li>
+      </ul>
+    </div>
+  
+    <h2>Users overview</h2>
+    <div class="item">
+      <ul>
+        <li v-for="uniqueUser in users" v-bind:key="user">
+          <h3>{{ uniqueUser.username }}</h3>
+          <p>{{ uniqueUser.email }}</p>
+          <p>{{ uniqueUser.role }}</p>
+          <hr>
+          <!-- <h3>{{ item.name }}</h3>
+          <p>{{ item.description }}</p>
+          <span class="unavailable" v-if="item.isLoanedOut">Unavailable</span>
+          <span class="available" v-else>Available</span>
+          <button class="update-button" @click="editItem(item)">Update</button>
+          <div v-if="item.id === selectedItemId" class="edit-form">
+            <input v-model="updatedItem.name" type="text" placeholder="Name" />
+            <textarea v-model="updatedItem.description" placeholder="Description"></textarea>
+            <div class="form-buttons">
+              <button class="save-button" @click="updateItem">Save</button>
+              <button class="cancel-button" @click="cancelEdit">Cancel</button>
+            </div>
+          </div>
+          <button class="delete-button" @click="deleteItem(item.id)">Delete</button>
+          <button class="delete-button" @click="loanItem(user.id, item.id)">Lend Out</button>
+          <hr> -->
+        </li>
+      </ul>
+    </div>
+  
+    <h2>Loans overview</h2>
+    <div class="item">
+      <ul>
+        <li v-for="loan in loans" v-bind:key="loan">
+          <h3>Loan: {{ loan.id }}</h3>
+          <h4>Item with item name: {{ loan.item.name }} and ID: {{ loan.item.id }} Loaned out By User with username: {{ loan.user.username }} and ID: {{ loan.user.id }}</h4>
+          <button class="" @click="returnItem(loan.id)">Item Returned</button>
+          <hr>
+          <!-- <h3>{{ item.name }}</h3>
         <p>{{ item.description }}</p>
         <span class="unavailable" v-if="item.isLoanedOut">Unavailable</span>
         <span class="available" v-else>Available</span>
@@ -229,40 +272,14 @@ export default {
         <button class="delete-button" @click="deleteItem(item.id)">Delete</button>
         <button class="delete-button" @click="loanItem(user.id, item.id)">Lend Out</button>
         <hr> -->
-      </li>
-    </ul>
+        </li>
+      </ul>
+    </div>
+
   </div>
-
-  <h2>Loans overview</h2>
-  <div class="item">
-    <ul>
-      <li v-for="loan in loans" v-bind:key="loan">
-        <h3>Loan: {{ loan.id }}</h3>
-        <h4>Item with item name: {{ loan.item.name }} and ID: {{ loan.item.id }} Loaned out By User with username: {{ loan.user.username }} and ID: {{ loan.user.id }}</h4>
-        <button class="" @click="returnItem(loan.id)">Item Returned</button>
-        <hr>
-        <!-- <h3>{{ item.name }}</h3>
-      <p>{{ item.description }}</p>
-      <span class="unavailable" v-if="item.isLoanedOut">Unavailable</span>
-      <span class="available" v-else>Available</span>
-      <button class="update-button" @click="editItem(item)">Update</button>
-      <div v-if="item.id === selectedItemId" class="edit-form">
-        <input v-model="updatedItem.name" type="text" placeholder="Name" />
-        <textarea v-model="updatedItem.description" placeholder="Description"></textarea>
-        <div class="form-buttons">
-          <button class="save-button" @click="updateItem">Save</button>
-          <button class="cancel-button" @click="cancelEdit">Cancel</button>
-        </div>
-      </div>
-      <button class="delete-button" @click="deleteItem(item.id)">Delete</button>
-      <button class="delete-button" @click="loanItem(user.id, item.id)">Lend Out</button>
-      <hr> -->
-      </li>
-    </ul>
+  <div v-else>
+    <p>You are not an admin.</p>
   </div>
-
-
-
 </template>
 
 <style>
