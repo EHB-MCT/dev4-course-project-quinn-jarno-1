@@ -43,6 +43,10 @@ export default {
 
         logout() {
             localStorage.removeItem('authToken')
+        },
+
+        register() {
+         this.$router.push('/register');
         }
     },
 };
@@ -54,6 +58,7 @@ export default {
         <input type="password" v-model="password" placeholder="Password" />
         <button @click="login">Login</button>
         <button @click="logout">Logout</button>
+        <button @click="register">Register</button>
     </div>
 </template>
 
