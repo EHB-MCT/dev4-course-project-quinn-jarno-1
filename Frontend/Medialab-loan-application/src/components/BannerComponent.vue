@@ -1,5 +1,9 @@
 <script setup>
 defineProps({
+  title: {
+    type: String,
+    required: true
+  },
   msg: {
     type: String,
     required: true
@@ -9,9 +13,9 @@ defineProps({
 
 <template>
   <div class="greetings">
-    <h1 class="red">{{ msg }}</h1>
+    <h1 class="red">{{ title }}</h1>
     <h3>
-      Check out the available items:
+      {{ msg }}
     </h3>
   </div>
 </template>
@@ -34,7 +38,7 @@ h3 {
 
 .greetings{
   margin-left: 5%;
-  margin-top: 7%;
+  /* margin-top: 7%; */
   width: 1000px;
 }
 
