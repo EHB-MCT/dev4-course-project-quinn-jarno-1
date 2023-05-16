@@ -5,6 +5,7 @@ export default {
   data() {
     return {
 
+      showModal: false,
       items: [],
       users: [],
       user: [],
@@ -22,6 +23,7 @@ export default {
   mounted() {
     this.getItems();
     this.getUsers();
+    this.getUser();
     this.getLoans();
   },
   methods: {
@@ -77,6 +79,27 @@ export default {
 
     returnItem(loanId) {
       console.log(loanId);
+
+      // const token = localStorage.getItem('authToken');
+      fetch(`http://localhost:9000/loans/return/${loanId}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          // 'Authorization': `${token}`
+        },
+        body: JSON.stringify({ loanId: loanId}),
+      })
+        .then(response => {
+          if (response.ok) {
+            console.log("SUCCES" + response)
+            return response.text();
+          } else {
+            throw new Error(`Invalid credentials ${loanId}`);
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
     },
 
     // Get Logged In User
@@ -179,14 +202,9 @@ export default {
       };
 
     },
-    // this doesnt get updated through the updateItem method but through the create loan method
-    setLoanStatus(isLoanedOut) {
-      this.updatedItem.isLoanedOut = isLoanedOut;
-    }
   },
 
   updated() {
-
     // console.log(this.items);
   }
 }
@@ -213,8 +231,22 @@ export default {
               <button class="cancel-button" @click="cancelEdit">Cancel</button>
             </div>
           </div>
-          <button class="delete-button" @click="deleteItem(item.id)">Delete</button>
+
+          <button class="modal-button" @click="showModal = true">Delete</button>
+          <div v-if="showModal" class="modal">
+            <div class="modal-content">
+              <!-- Modal content goes here -->
+              <h1>Are you sure you want to delete this item?</h1>
+              <button class="modal-button" @click="showModal = false">Cancel</button>
+              <button class="delete-button" @click="deleteItem(item.id)">Delete</button>
+            </div>
+          </div>
+ 
+
           <!-- <button class="delete-button" @click="loanItem(user.id, item.id)">Lend Out</button> -->
+
+
+
           <hr>
         </li>
       </ul>
@@ -228,22 +260,6 @@ export default {
           <p>{{ uniqueUser.email }}</p>
           <p>{{ uniqueUser.role }}</p>
           <hr>
-          <!-- <h3>{{ item.name }}</h3>
-          <p>{{ item.description }}</p>
-          <span class="unavailable" v-if="item.isLoanedOut">Unavailable</span>
-          <span class="available" v-else>Available</span>
-          <button class="update-button" @click="editItem(item)">Update</button>
-          <div v-if="item.id === selectedItemId" class="edit-form">
-            <input v-model="updatedItem.name" type="text" placeholder="Name" />
-            <textarea v-model="updatedItem.description" placeholder="Description"></textarea>
-            <div class="form-buttons">
-              <button class="save-button" @click="updateItem">Save</button>
-              <button class="cancel-button" @click="cancelEdit">Cancel</button>
-            </div>
-          </div>
-          <button class="delete-button" @click="deleteItem(item.id)">Delete</button>
-          <button class="delete-button" @click="loanItem(user.id, item.id)">Lend Out</button>
-          <hr> -->
         </li>
       </ul>
     </div>
@@ -254,24 +270,8 @@ export default {
         <li v-for="loan in loans" v-bind:key="loan">
           <h3>Loan: {{ loan.id }}</h3>
           <h4>Item with item name: {{ loan.item.name }} and ID: {{ loan.item.id }} Loaned out By User with username: {{ loan.user.username }} and ID: {{ loan.user.id }}</h4>
-          <button class="" @click="returnItem(loan.id)">Item Returned</button>
+            <button class="return-button" @click="returnItem(loan.id)">Item Returned</button>
           <hr>
-          <!-- <h3>{{ item.name }}</h3>
-        <p>{{ item.description }}</p>
-        <span class="unavailable" v-if="item.isLoanedOut">Unavailable</span>
-        <span class="available" v-else>Available</span>
-        <button class="update-button" @click="editItem(item)">Update</button>
-        <div v-if="item.id === selectedItemId" class="edit-form">
-          <input v-model="updatedItem.name" type="text" placeholder="Name" />
-          <textarea v-model="updatedItem.description" placeholder="Description"></textarea>
-          <div class="form-buttons">
-            <button class="save-button" @click="updateItem">Save</button>
-            <button class="cancel-button" @click="cancelEdit">Cancel</button>
-          </div>
-        </div>
-        <button class="delete-button" @click="deleteItem(item.id)">Delete</button>
-        <button class="delete-button" @click="loanItem(user.id, item.id)">Lend Out</button>
-        <hr> -->
         </li>
       </ul>
     </div>
@@ -313,7 +313,10 @@ span {
   margin-bottom: 5px;
 }
 
-.delete-button {
+.modal-button,
+.return-button,
+.delete-button,
+.update-button {
   background-color: hsl(0, 0%, 0%);
   color: rgb(255, 255, 255);
   border: none;
@@ -325,11 +328,14 @@ span {
   float: right;
 }
 
-.delete-button:hover {
+.modal-button:hover,
+.return-button:hover,
+.delete-button:hover,
+.update-button:hover {
   background-color: #a90000;
 }
 
-.update-button {
+/* .update-button {
   background-color: hsl(0, 0%, 0%);
   color: rgb(255, 255, 255);
   border: none;
@@ -343,7 +349,7 @@ span {
 
 .update-button:hover {
   background-color: #a90000;
-}
+} */
 
 .edit-form {
   background-color: #f8f8f8;
@@ -396,5 +402,25 @@ span {
 .available {
   color: green;
   font-weight: bold;
+}
+
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(255, 255, 255, 0.132); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* Adjust the z-index as needed */
+}
+
+.modal-content {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 </style>
