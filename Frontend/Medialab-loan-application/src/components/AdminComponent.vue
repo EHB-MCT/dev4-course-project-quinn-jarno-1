@@ -7,6 +7,7 @@ export default {
 
       showModal: false,
       items: [],
+      loanedItems: [],
       users: [],
       user: [],
       selectedItemId: null,
@@ -69,17 +70,15 @@ export default {
       fetch('http://localhost:9000/loans')
         .then(response => response.json())
         .then(data => {
-          this.loans = data;
+          this.loanedItems = data;
           console.log(data);
         })
         .catch(error => {
           console.error(error);
         });
     },
-
+    
     returnItem(loanId) {
-      console.log(loanId);
-
       // const token = localStorage.getItem('authToken');
       fetch(`http://localhost:9000/loans/return/${loanId}`, {
         method: 'POST',
@@ -91,8 +90,13 @@ export default {
       })
         .then(response => {
           if (response.ok) {
+            const index = this.loanedItems.findIndex(loan => loan.id === loanId);
+            if (index !== -1) {
+              this.loanedItems.splice(index, 1);
+            }
             console.log("SUCCES" + response)
             return response.text();
+           
           } else {
             throw new Error(`Invalid credentials ${loanId}`);
           }
@@ -255,22 +259,24 @@ export default {
     <h2>Users overview</h2>
     <div class="item">
       <ul>
+        <!-- eslint-disable-next-line vue/valid-v-for -->
         <li v-for="uniqueUser in users" v-bind:key="user">
           <h3>{{ uniqueUser.username }}</h3>
-          <p>{{ uniqueUser.email }}</p>
-          <p>{{ uniqueUser.role }}</p>
+          <p> Email: {{ uniqueUser.email }}</p>
+          <p> Role: {{ uniqueUser.role }}</p>
           <hr>
         </li>
       </ul>
     </div>
   
     <h2>Loans overview</h2>
-    <div class="item">
+    <div class="loan">
       <ul>
-        <li v-for="loan in loans" v-bind:key="loan">
+        <li v-for="loan in loanedItems" v-bind:key="loan">
           <h3>Loan: {{ loan.id }}</h3>
-          <h4>Item with item name: {{ loan.item.name }} and ID: {{ loan.item.id }} Loaned out By User with username: {{ loan.user.username }} and ID: {{ loan.user.id }}</h4>
-            <button class="return-button" @click="returnItem(loan.id)">Item Returned</button>
+          <p> Item: {{loan.item.name }}</p>
+          <p> Loaned to: {{ loan.user.username }} with ID: {{ loan.user.id }}</p>
+          <button class="return-button" @click="returnItem(loan.id)">Item Returned</button>
           <hr>
         </li>
       </ul>
@@ -350,6 +356,13 @@ span {
 .update-button:hover {
   background-color: #a90000;
 } */
+
+.loan {
+  background-color: #f8f8f8;
+  padding: 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+}
 
 .edit-form {
   background-color: #f8f8f8;
