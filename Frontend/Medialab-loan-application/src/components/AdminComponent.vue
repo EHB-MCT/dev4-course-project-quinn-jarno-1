@@ -11,11 +11,19 @@ export default {
       users: [],
       user: [],
       selectedItemId: null,
+      selectedUserId: null,
       updatedItem: {
         id: null,
         name: "",
         description: "",
         isLoanedOut: false
+      },
+      updatedUser: {
+      id: null,
+      username: "",
+      password: "",
+      email: "",
+      // role: ""
       }
 
     }
@@ -289,12 +297,7 @@ export default {
               <button class="delete-button" @click="deleteItem(item.id)">Delete</button>
             </div>
           </div>
- 
-
           <!-- <button class="delete-button" @click="loanItem(user.id, item.id)">Lend Out</button> -->
-
-
-
           <hr>
         </li>
       </ul>
@@ -303,22 +306,22 @@ export default {
     <h2>Users overview</h2>
     <div class="item">
       <ul>
-  <li v-for="uniqueUser in users" :key="uniqueUser.id">
-    <h3>{{ uniqueUser.username }}</h3>
-    <p>Email: {{ uniqueUser.email }}</p>
-    <p>Role: {{ uniqueUser.role }}</p>
-    <button class="update-button" @click="editUser(uniqueUser)">Edit</button>
-    <div v-if="uniqueUser.id === selectedUserId" class="edit-form">
-      <input v-model="updatedUser.username" type="text" placeholder="Username" />
-      <textarea v-model="updatedUser.email" placeholder="Email"></textarea>
-      <div class="form-buttons">
-        <button class="save-button" @click="updateUser">Save</button>
-        <button class="cancel-button" @click="cancelUpdate">Cancel</button>
-      </div>
-    </div>
-    <hr>
-  </li>
-</ul>
+        <li v-for="uniqueUser in users" :key="user">
+          <h3>{{ uniqueUser.username }}</h3>
+          <p>Email: {{ uniqueUser.email }}</p>
+          <p>Role: {{ uniqueUser.role }}</p>
+          <button class="update-button" @click="editUser(uniqueUser)">Edit</button>
+          <div v-if="uniqueUser.id === selectedUserId" class="edit-form">
+            <input v-model="updatedUser.username" type="text" placeholder="Username" />
+            <textarea v-model="updatedUser.email" placeholder="Email"></textarea>
+            <div class="form-buttons">
+              <button class="save-button" @click="updateUser()">Save</button>
+              <button class="cancel-button" @click="cancelUpdate()">Cancel</button>
+            </div>
+          </div>
+          <hr>
+        </li>
+      </ul>
 
     </div>
   
@@ -329,6 +332,8 @@ export default {
           <h3>Loan: {{ loan.id }}</h3>
           <p> Item: {{loan.item.name }}</p>
           <p> Loaned to: {{ loan.user.username }} with ID: {{ loan.user.id }}</p>
+          <p v-if="loan.returned">Item has been returned</p>
+          <p v-else>Item is Still Loaned Out</p>
           <button class="return-button" @click="returnItem(loan.id)">Item Returned</button>
           <hr>
         </li>
