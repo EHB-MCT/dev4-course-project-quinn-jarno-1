@@ -17,7 +17,6 @@
                 email: this.email,
                 role: this.role
             };
-        // Perform registration logic here, e.g., send data to server
         fetch('http://localhost:9000/users', {
                 method: 'POST',
                 headers: {
@@ -51,7 +50,6 @@
           role: this.role
         };
         console.log(userData);
-        // You can make an API call to register the user and handle the response accordingly
       }
     }
   };
