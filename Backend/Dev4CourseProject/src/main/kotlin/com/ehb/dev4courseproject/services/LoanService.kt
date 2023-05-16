@@ -45,11 +45,16 @@ class LoanService() {
         val loan = loanRepository.findById(loanId)
             .orElseThrow { EntityNotFoundException("Loan not found with ID $loanId") }
 
+        if (loan.returned) {
+            throw EntityNotFoundException("Loan with ID $loanId has already been returned")
+        }
+
         val item = loan.item
         item.isLoanedOut = false
         itemRepository.save(item)
 
         loan.returned = true
+
         return loanRepository.save(loan)
     }
 }
