@@ -8,7 +8,8 @@
         <img alt="Vue logo" class="logo" src="../assets/ehblogo.jpg" width="225" height="225" />
 
         <div class="wrapper">
-            <HelloWorld msg="Admin Dashboard" />
+            <HelloWorld title="Admin Dashboard" />
+            <HelloWorld msg="Edit & Delete Users, Items And Loans" />
         </div>
     </header>
 

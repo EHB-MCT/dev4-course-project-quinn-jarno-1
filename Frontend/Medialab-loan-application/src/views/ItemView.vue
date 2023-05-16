@@ -8,7 +8,8 @@
     <img alt="Vue logo" class="logo" src="../assets/ehblogo.jpg" width="225" height="225" />
 
     <div class="wrapper">
-      <HelloWorld msg="Medialab Loan Application" />
+      <HelloWorld title="Medialab Loan Application" />
+      <HelloWorld msg="Check out the available items:" />
     </div>
   </header>
   
