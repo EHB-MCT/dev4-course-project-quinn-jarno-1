@@ -332,7 +332,8 @@ export default {
           <h3>Loan: {{ loan.id }}</h3>
           <p> Item: {{loan.item.name }}</p>
           <p> Loaned to: {{ loan.user.username }} with ID: {{ loan.user.id }}</p>
-          <p> {{ loan.returned }} </p>
+          <p v-if="loan.returned">Item has been returned</p>
+          <p v-else>Item is Still Loaned Out</p>
           <button class="return-button" @click="returnItem(loan.id)">Item Returned</button>
           <hr>
         </li>
