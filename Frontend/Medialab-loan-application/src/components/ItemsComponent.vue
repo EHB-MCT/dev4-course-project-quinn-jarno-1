@@ -1,7 +1,5 @@
 <script>
-
 export default {
-
 data() {
   return {
 
@@ -21,6 +19,7 @@ data() {
 mounted() {
   this.getItems();
   this.getUser();
+  // this.users = [];
 },
  methods: {
   // Gets All Items
@@ -152,6 +151,11 @@ mounted() {
 </script>
 
 <template>
+  <nav>
+    <router-link to="/admin" v-if="user && user.role === 'admin'">
+      Dashboard
+    </router-link>
+  </nav>
   <h2>Items overview</h2>
     <div class="item">
           <ul>
