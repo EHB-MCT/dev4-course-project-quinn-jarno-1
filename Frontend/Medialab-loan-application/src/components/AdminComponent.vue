@@ -206,6 +206,50 @@ export default {
       };
 
     },
+
+    //USER EDIT
+    editUser(user) {
+      this.selectedUserId = user.id;
+      this.updatedUser = { ...user };
+      console.log("clicked")
+    },
+
+    updateUser() {
+      fetch(`http://localhost:9000/users/update/${this.selectedUserId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(this.updatedUser)
+      })
+        .then(response => {
+          console.log("response OK")
+          if (response.ok) {
+            const index = this.users.findIndex(user => user.id === this.updatedUser.id);
+            if (index !== -1) {
+              this.users.splice(index, 1, this.updatedUser);
+              
+            }
+            this.cancelUpdate();
+          } else {
+            console.error('User update failed.');
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+    cancelUpdate() {
+      this.selectedUserId = null;
+      this.updatedUser = {
+        id: null,
+        username: "",
+        password: "",
+        email: "",
+        role: ""
+      };
+
+    },
   },
 
   updated() {
@@ -259,14 +303,23 @@ export default {
     <h2>Users overview</h2>
     <div class="item">
       <ul>
-        <!-- eslint-disable-next-line vue/valid-v-for -->
-        <li v-for="uniqueUser in users" v-bind:key="user">
-          <h3>{{ uniqueUser.username }}</h3>
-          <p> Email: {{ uniqueUser.email }}</p>
-          <p> Role: {{ uniqueUser.role }}</p>
-          <hr>
-        </li>
-      </ul>
+  <li v-for="uniqueUser in users" :key="uniqueUser.id">
+    <h3>{{ uniqueUser.username }}</h3>
+    <p>Email: {{ uniqueUser.email }}</p>
+    <p>Role: {{ uniqueUser.role }}</p>
+    <button class="update-button" @click="editUser(uniqueUser)">Edit</button>
+    <div v-if="uniqueUser.id === selectedUserId" class="edit-form">
+      <input v-model="updatedUser.username" type="text" placeholder="Username" />
+      <textarea v-model="updatedUser.email" placeholder="Email"></textarea>
+      <div class="form-buttons">
+        <button class="save-button" @click="updateUser">Save</button>
+        <button class="cancel-button" @click="cancelUpdate">Cancel</button>
+      </div>
+    </div>
+    <hr>
+  </li>
+</ul>
+
     </div>
   
     <h2>Loans overview</h2>
