@@ -6,6 +6,9 @@ export default {
     return {
 
       showModal: false,
+      showAllItems: false,
+      showAllUsers: false,
+      showAllLoans: false,
       items: [],
       loanedItems: [],
       users: [],
@@ -36,6 +39,15 @@ export default {
     this.getLoans();
   },
   methods: {
+    toggleAllItems() {
+      this.showAllItems = !this.showAllItems; 
+    },
+    toggleAllUsers() {
+      this.showAllUsers = !this.showAllUsers; 
+    },
+    toggleAllLoans() {
+      this.showAllLoans = !this.showAllLoans; 
+    },
     // Gets All Items
     getItems() {
       fetch('http://localhost:9000/items')
@@ -270,8 +282,10 @@ export default {
 
 <template>
   <div v-if="user && user.role === 'admin'">
-    <h2>Items overview</h2>
+    
     <div class="item">
+      <h2 class="clickable-title" @click="toggleAllItems">Items overview</h2>
+      <div v-show="showAllItems">
       <ul>
         <li v-for="item in items" v-bind:key="item">
           <h3>{{ item.name }}</h3>
@@ -302,9 +316,12 @@ export default {
         </li>
       </ul>
     </div>
+    </div>
   
-    <h2>Users overview</h2>
+    
     <div class="item">
+      <h2 class="clickable-title" @click="toggleAllUsers">Users overview</h2>
+      <div v-show="showAllUsers">
       <ul>
         <li v-for="uniqueUser in users" :key="user">
           <h3>{{ uniqueUser.username }}</h3>
@@ -322,11 +339,13 @@ export default {
           <hr>
         </li>
       </ul>
+    </div>
 
     </div>
   
-    <h2>Loans overview</h2>
-    <div class="loan">
+    <div class="item">
+      <h2 class="clickable-title" @click="toggleAllLoans">Loans overview</h2>
+      <div v-show="showAllLoans">
       <ul>
         <li v-for="loan in loanedItems" v-bind:key="loan">
           <h3>Loan: {{ loan.id }}</h3>
@@ -340,6 +359,8 @@ export default {
       </ul>
     </div>
 
+    </div>
+
   </div>
   <div v-else>
     <p>You are not an admin.</p>
@@ -347,6 +368,18 @@ export default {
 </template>
 
 <style>
+.clickable-title {
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.clickable-title:hover {
+  background-color: lightgray;
+}
+
+.clickable-title:active {
+  background-color: darkgray;
+}
 ul {
   list-style-type: none;
   padding: 0;
