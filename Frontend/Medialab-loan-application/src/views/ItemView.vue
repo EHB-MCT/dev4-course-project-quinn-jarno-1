@@ -11,7 +11,7 @@
       <HelloWorld msg="Medialab Loan Application" />
     </div>
   </header>
-
+  
   <main>  
     <ItemsComponent/>
   </main>
