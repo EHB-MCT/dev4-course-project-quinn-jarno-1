@@ -4,9 +4,6 @@ export default {
 
   data() {
     return {
-
-      showModalItem: false,
-      showModalUser: false,
       showAllItems: false,
       showAllUsers: false,
       showAllLoans: false,
@@ -15,24 +12,32 @@ export default {
       users: [],
       user: [],
       selectedItemId: null,
+      selectedDeleteItemId: null,
       selectedUserId: null,
+      selectedDeleteUserId: null,
       updatedItem: {
         id: null,
         name: "",
         description: "",
         isLoanedOut: false
       },
-      updatedUser: {
-      id: null,
-      username: "",
-      password: "",
-      email: "",
-      // role: ""
+      createdItem: {
+        id: null,
+        name: "",
+        description: "",
+        isLoanedOut: false
       },
-      updatedRole: {
-      role: ""
-      }
-
+      updatedUser: {
+        id: null,
+        username: "",
+        password: "",
+        email: "",
+        role: ""
+      },
+      // updatedRole: {
+      //   role: ""
+      // }
+      // role: ""
     }
   },
 
@@ -88,38 +93,6 @@ export default {
         .catch(error => {
           console.error(error);
         });
-    },
-
-    updateRole(userId) {
-      fetch(`http://localhost:9000/users/updateRole/${userId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(this.updatedRole)
-      })
-        .then(response => {
-          if (response.ok) {
-            console.log("response OK")
-            const index = this.users.findIndex(user => user.id === this.updatedRole.id);
-            if (index !== -1) {
-              this.users.splice(index, 1, this.updatedRole);
-            }
-            this.cancelChange();
-          } else {
-            console.error('Role change failed.');
-          }
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    },
-
-    cancelChange() {
-      this.updatedRole = {
-        role: ""
-      };
-
     },
 
     getLoans() {
@@ -201,7 +174,14 @@ export default {
     // },
 
     // Delete Item
+    deleteItemModal(item) {
+      this.selectedDeleteItemId = item.id;
+      this.updatedItem = { ...item };
+      console.log(`${this.selectedDeleteItemId}`)
+    },
+      
     deleteItem(itemId) {
+      console.log(itemId)
       fetch(`http://localhost:9000/items/${itemId}`, {
         method: 'DELETE',
         headers: {
@@ -220,6 +200,10 @@ export default {
         }).catch(error => {
           console.error(error);
         });
+    },
+
+    cancelItemDelete() {
+      this.selectedDeleteItemId = null;
     },
 
     // Edit Item
@@ -244,7 +228,7 @@ export default {
             if (index !== -1) {
               this.items.splice(index, 1, this.updatedItem);
             }
-            this.cancelEdit();
+            this.cancelItemUpdate();
           } else {
             console.error('Item update failed.');
           }
@@ -253,7 +237,8 @@ export default {
           console.error(error);
         });
     },
-    cancelEdit() {
+
+    cancelItemUpdate() {
       this.selectedItemId = null;
       this.updatedItem = {
         id: null,
@@ -264,7 +249,35 @@ export default {
 
     },
 
+    // Create Item
+    createItem() {
+      fetch('http://localhost:9000/items', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(this.createdItem),
+      })
+        .then(response => {
+          if (response.ok) {
+            this.items.push(this.createdItem)
+            console.log(`Item With Name ${this.createdItem.name} Created`)
+          } else {
+            throw new Error(`Could not create item. ${this.createdItem} `);
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+
     // DELETE USER
+    deleteUserModal(user){
+      this.selectedDeleteUserId = user.id;
+      this.updatedUser = { ...user };
+      console.log(`${this.selectedDeleteUserId}`)
+    },
+
     deleteUser(userId) {
       fetch(`http://localhost:9000/users/delete/${userId}`, {
         method: 'DELETE',
@@ -288,11 +301,15 @@ export default {
         });
     },
 
+    cancelUserDelete() {
+      this.selectedDeleteUserId = null;
+    },
+
     //USER EDIT
     editUser(user) {
       this.selectedUserId = user.id;
       this.updatedUser = { ...user };
-      console.log("clicked")
+      console.log(`${this.selectedUserId}`)
     },
 
     updateUser() {
@@ -311,7 +328,7 @@ export default {
               this.users.splice(index, 1, this.updatedUser);
               
             }
-            this.cancelUpdate();
+            this.cancelUserUpdate();
           } else {
             console.error('User update failed.');
           }
@@ -320,7 +337,8 @@ export default {
           console.error(error);
         });
     },
-    cancelUpdate() {
+    
+    cancelUserUpdate() {
       this.selectedUserId = null;
       this.updatedUser = {
         id: null,
@@ -331,6 +349,41 @@ export default {
       };
 
     },
+    
+    updateRole(userId) {
+      fetch(`http://localhost:9000/users/updateRole/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(this.updatedUser)
+      })
+        .then(response => {
+          if (response.ok) {
+            console.log("response OK")
+            const index = this.users.findIndex(user => user.id === this.updatedUser.id);
+            console.log(index)
+            if (index !== -1) {
+              this.users.splice(index, 1, this.updatedUser);
+              
+            }
+            this.cancelUserUpdate();
+          } else {
+            console.error('Role change failed.');
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+
+    // cancelChange() {
+    //   this.updatedRole = {
+    //     role: ""
+    //   };
+
+    // },
+
   },
 
   updated() {
@@ -353,6 +406,12 @@ export default {
     <div class="item">
       <h2 class="clickable-title" @click="toggleAllItems">Items overview</h2>
       <div v-show="showAllItems">
+          <div>
+            <input type="text" v-model="createdItem.name" placeholder="Name" />
+            <input type="text" v-model="createdItem.description" placeholder="Description" />
+            <input type="hidden" v-model="createdItem.isLoanedOut" />
+            <button @click="createItem()">Create item</button>
+          </div>
       <ul>
         <li v-for="item in items" v-bind:key="item">
           <div class="item-list">
@@ -364,7 +423,7 @@ export default {
             </div>
   
             <div class="item-list-buttons">            
-              <button class="modal-button" @click="showModalItem = true">Delete</button>
+              <button class="modal-button" @click="deleteItemModal(item)">Delete</button>
               <button class="update-button" @click="editItem(item)">Update</button>
             </div>
           </div>
@@ -375,17 +434,17 @@ export default {
             <textarea v-model="updatedItem.description" placeholder="Description"></textarea>
             <div class="form-buttons">
               <button class="save-button" @click="updateItem">Save</button>
-              <button class="cancel-button" @click="cancelEdit">Cancel</button>
+              <button class="cancel-button" @click="cancelItemUpdate">Cancel</button>
             </div>
           </div>
 
           <!-- Delete -->
-          <div v-if="showModalItem" class="modal">
+          <div  v-if="item.id === selectedDeleteItemId" class="modal">
             <div class="modal-content">
               <!-- Modal content goes here -->
               <h1>Are you sure you want to delete this item?</h1>
-              <button class="modal-cancel-button" @click="showModalItem = false">Cancel</button>
-              <button class="delete-button" @click="deleteItem(item.id), showModalItem = false">Delete</button>
+              <button class="modal-cancel-button" @click="cancelItemDelete()">Cancel</button>
+              <button class="delete-button" @click="deleteItem(item.id)">Delete</button>
             </div>
           </div>
           <!-- <button class="delete-button" @click="loanItem(user.id, item.id)">Lend Out</button> -->
@@ -408,21 +467,20 @@ export default {
                 <h3>{{ uniqueUser.username }}</h3>
                 <p>Email: {{ uniqueUser.email }}</p>
               </div>  
-              <p>Role: {{ uniqueUser.role }}</p>
+                <p>Role: {{ uniqueUser.role }}</p>
             </div>
             <div class="user-list-buttons">
-              <button class="modal-button" @click="showModalUser = true">Delete</button>
+              <button class="modal-button" @click="deleteUserModal(uniqueUser)">Delete</button>
               <button class="update-button" @click="editUser(uniqueUser)">Edit</button>
-              <button class="update-button" @click="updateRole(uniqueUser.id)">Change Role</button>
-
             </div>
           </div>
-          <div v-if="showModalUser" class="modal">
+
+          <div v-if="uniqueUser.id === selectedDeleteUserId" class="modal">
             <div class="modal-content">
               <!-- Modal content goes here -->
               <h1>Are you sure you want to delete this user?</h1>
-              <button class="modal-cancel-button" @click="showModalUser = false">Cancel</button>
-              <button class="delete-button" @click="deleteUser(uniqueUser.id), showModalUser = false">Delete</button>
+              <button class="modal-cancel-button" @click="cancelUserDelete()">Cancel</button>
+              <button class="delete-button" @click="deleteUser(uniqueUser.id)">Delete</button>
             </div>
           </div>
 
@@ -430,9 +488,15 @@ export default {
           <div v-if="uniqueUser.id === selectedUserId" class="edit-form">
             <input v-model="updatedUser.username" type="text" placeholder="Username" />
             <textarea v-model="updatedUser.email" placeholder="Email"></textarea>
+            <label>Select Role</label>
+            <select v-model="updatedUser.role" id="role" >
+              <option value="admin">Admin</option>
+              <option value="user">User</option>
+            </select>
             <div class="form-buttons">
+              <button class="update-button" @click="updateRole(uniqueUser.id)">Change Role</button>
               <button class="save-button" @click="updateUser()">Save</button>
-              <button class="cancel-button" @click="cancelUpdate()">Cancel</button>
+              <button class="cancel-button" @click="cancelUserUpdate()">Cancel</button>
             </div>
           </div>
           <!-- <hr> -->
@@ -449,7 +513,7 @@ export default {
         <li v-for="loan in loanedItems" v-bind:key="loan">
           <div class="loan-list">
             <div class="loan-list-info">
-              <h3>Loan: {{ loan.id }} <span class="loan-ended" v-if="loan.returned === true">ENDED</span><span class="loan-active" v-else>ACTIVE</span></h3>
+              <h3>Loan: {{ loan.id }} <span class="loan-ended" v-if="loan.returned">ENDED</span><span class="loan-active" v-else>ACTIVE</span></h3>
               <p> Item: {{loan.item.name }}</p>
               <p> User: {{ loan.user.username }} with ID: {{ loan.user.id }}</p>
               <h4> Loan Date: {{ loan.loanDate }}</h4>
@@ -458,7 +522,11 @@ export default {
               <p v-else>Item is Still Loaned Out</p>
             </div>
             <div class="loan-list-buttons">
-              <button class="return-button" @click="returnItem(loan.id)">Item Returned</button>
+              <span v-if="loan.returned">
+              </span>
+              <span v-else>
+                <button class="return-button" @click="returnItem(loan.id)">Return Item</button>
+              </span>
             </div>
           </div>
           <!-- <hr> -->
