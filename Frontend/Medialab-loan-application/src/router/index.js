@@ -4,6 +4,7 @@ import {
 } from 'vue-router'
 import LoginComponent from '../components/LoginComponent.vue'
 import Registration from '../components/RegistrationComponent.vue'
+import Items from '../views/ItemView.vue'
 
 const router = createRouter({
     history: createWebHistory(
@@ -16,7 +17,7 @@ const router = createRouter({
         {
             path: '/items',
             name: 'items',
-            component: () => import('../views/ItemView.vue'),
+            component: Items
         },
         {
             path: '/admin',

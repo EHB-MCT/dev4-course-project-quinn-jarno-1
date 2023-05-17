@@ -46,7 +46,7 @@ export default {
         },
 
         register() {
-         this.$router.push('/register');
+          this.$router.push('/register');
         }
     },
 };
@@ -54,7 +54,7 @@ export default {
 
 <template>
     <div class="login-container">
-      <form class="login-form">
+      <div class="login-form">
         <h2>Login</h2>
         <div class="form-group">
           <label for="username">Username</label>
@@ -69,122 +69,122 @@ export default {
           <button class="login-button" @click="logout">Logout</button>
           <button class="register-button2" @click="register">Register</button>
         </div>
-      </form>
+      </div>
     </div>
 </template>
   
-  <style>
-  .login-container {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 90vh;
-  }
-  
-  .login-form {
-    background-color: #f5f5f5;
-    border: 0px solid #ebebeb;
-    padding: 20px;
-    border-radius: 4px;
-    width: 300px;
-  }
-  
-  h2 {
-    text-align: center;
-    margin-bottom: 20px;
-  }
-  
-  .form-group {
-    margin-bottom: 15px;
-  }
-  
-  label {
-    display: block;
-    font-weight: bold;
-    margin-bottom: 5px;
-  }
-  
-  input[type="text"],
-  input[type="password"] {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-  }
-  
-  .form-actions {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .login-button,
-  .register-button2 {
-    background-color: #ce0000;
-    color: #fff;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    margin: 10px;
-  }
-  
-  .login-button:hover,
-  .register-button2:hover {
-    background-color: #000000;
-  }
-  
-  .register-button2 {
-    background-color: #ce0000;
-  }
-  
-  .register-button2:hover {
-    background-color: #000000;
-  }
-
-ul {
-    list-style-type: none;
-    padding: 0;
+<style>
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 90vh;
 }
 
-li {
-    margin-bottom: 20px;
+.login-form {
+  background-color: #f5f5f5;
+  border: 0px solid #ebebeb;
+  padding: 20px;
+  border-radius: 4px;
+  width: 300px;
 }
 
 h2 {
-    font-size: 40px;
-    margin-bottom: 20px;
-    font-weight: bold;
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+input[type="text"],
+input[type="password"] {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.login-button,
+.register-button2 {
+  background-color: #ce0000;
+  color: #fff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 10px;
+}
+
+.login-button:hover,
+.register-button2:hover {
+  background-color: #000000;
+}
+
+.register-button2 {
+  background-color: #ce0000;
+}
+
+.register-button2:hover {
+  background-color: #000000;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 20px;
+}
+
+h2 {
+  font-size: 40px;
+  margin-bottom: 20px;
+  font-weight: bold;
 }
 
 h3 {
-    font-size: 20px;
-    margin-bottom: 5px;
-    font-weight: bold;
+  font-size: 20px;
+  margin-bottom: 5px;
+  font-weight: bold;
 }
 
 p {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 span {
-    font-weight: lighter;
-    margin-bottom: 5px;
+  font-weight: lighter;
+  margin-bottom: 5px;
 }
 
 .delete-button {
-    background-color: hsl(0, 0%, 0%);
-    color: rgb(255, 255, 255);
-    border: none;
-    padding: 8px 16px;
-    margin-left: 3px;
-    margin-bottom: -10px;
-    border-radius: 4px;
-    cursor: pointer;
-    float: right;
+  background-color: hsl(0, 0%, 0%);
+  color: rgb(255, 255, 255);
+  border: none;
+  padding: 8px 16px;
+  margin-left: 3px;
+  margin-bottom: -10px;
+  border-radius: 4px;
+  cursor: pointer;
+  float: right;
 }
 
 .delete-button:hover {
-    background-color: #a90000;
+  background-color: #a90000;
 }
 </style>
