@@ -12,8 +12,13 @@ data() {
           name: "",
           description: "",
           isLoanedOut: false
-        }
-
+        },
+        createdItem: {
+          id: null,
+          name: "",
+          description: "",
+          isLoanedOut: false
+        },
   }
 },
 
@@ -57,6 +62,27 @@ mounted() {
   executeSearch() {
     this.filterItems(this.searchQuery);
     },
+
+    createItem(createdItem) {
+            fetch('http://localhost:9000/items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(createdItem),
+            })
+                .then(response => {
+                    if (response.ok) {
+                      this.items.push(createdItem)
+                        console.log("Item creation OK")
+                    } else {
+                        throw new Error('Could not create item.');
+                    }
+                })
+                .catch(error => {
+                    console.error(error);
+           });
+        },
 
   // Get Logged In User
   getUser() {
@@ -180,6 +206,11 @@ mounted() {
     </router-link>
   </nav>
   <h2>Items overview</h2>
+  <div>
+        <input type="text" v-model="createdItem.name" placeholder="Name" />
+        <input type="text" v-model="createdItem.description" placeholder="Description" />
+        <button @click="createItem">Create item</button>
+      </div>
   <div class="search-container">
     <input class="search-input" type="text" v-model="searchQuery" placeholder="Search item" />
   </div>
