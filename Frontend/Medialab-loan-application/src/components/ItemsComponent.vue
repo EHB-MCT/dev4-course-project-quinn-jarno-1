@@ -226,7 +226,8 @@ mounted() {
                       <span class="available" v-else>Available</span>
                     </div>
                     <div class="item-list-buttons">
-                      <button class="loan-button" @click="loanItem(user.id, item.id)">Lend Out</button>
+                      <button v-if="!item.isLoanedOut" class="loan-button" @click="loanItem(user.id, item.id)">Lend Out</button>
+                      <span v-else></span>
                     </div>
                   </div>
                   <!-- <hr> -->
@@ -242,7 +243,8 @@ mounted() {
                     <span class="available" v-else>Available</span>
                   </div>
                   <div class="item-list-buttons">
-                    <button class="loan-button" @click="loanItem(user.id, item.id)">Lend Out</button>
+                    <button v-if="!item.isLoanedOut" class="loan-button" @click="loanItem(user.id, item.id)">Lend Out</button>
+                    <span v-else></span>
                   </div>
                 </div>
                   <!-- <hr> -->
