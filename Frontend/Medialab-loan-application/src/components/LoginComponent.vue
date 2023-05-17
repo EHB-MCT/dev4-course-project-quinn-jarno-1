@@ -53,16 +53,95 @@ export default {
 </script>
 
 <template>
-    <div>
-        <input type="text" v-model="username" placeholder="Username" />
-        <input type="password" v-model="password" placeholder="Password" />
-        <button @click="login">Login</button>
-        <button @click="logout">Logout</button>
-        <button @click="register">Register</button>
+    <div class="login-container">
+      <form class="login-form">
+        <h2>Login</h2>
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" v-model="username" id="username" placeholder="Username" />
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" v-model="password" id="password" placeholder="Password" />
+        </div>
+        <div class="form-actions">
+          <button class="login-button" @click="login">Login</button>
+          <button class="login-button" @click="logout">Logout</button>
+          <button class="register-button2" @click="register">Register</button>
+        </div>
+      </form>
     </div>
-</template>
+  </template>
+  
+  <style>
+  .login-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 90vh;
+  }
+  
+  .login-form {
+    background-color: #f5f5f5;
+    border: 0px solid #ebebeb;
+    padding: 20px;
+    border-radius: 4px;
+    width: 300px;
+  }
+  
+  h2 {
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 5px;
+  }
+  
+  input[type="text"],
+  input[type="password"] {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .login-button,
+  .register-button2 {
+    background-color: #ce0000;
+    color: #fff;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin: 10px;
+  }
+  
+  .login-button:hover,
+  .register-button2:hover {
+    background-color: #000000;
+  }
+  
+  .register-button2 {
+    background-color: #ce0000;
+  }
+  
+  .register-button2:hover {
+    background-color: #000000;
+  }
 
-<style>
 ul {
     list-style-type: none;
     padding: 0;
