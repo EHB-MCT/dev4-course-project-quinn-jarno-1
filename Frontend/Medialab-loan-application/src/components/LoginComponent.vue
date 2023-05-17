@@ -58,11 +58,11 @@ export default {
         <h2>Login</h2>
         <div class="form-group">
           <label for="username">Username</label>
-          <input type="text" v-model="username" id="username" placeholder="Username" />
+          <input type="text" v-model="username" required id="username" placeholder="Username" />
         </div>
         <div class="form-group">
           <label for="password">Password</label>
-          <input type="password" v-model="password" id="password" placeholder="Password" />
+          <input type="password" v-model="password" required id="password" placeholder="Password" />
         </div>
         <div class="form-actions">
           <button class="login-button" @click="login">Login</button>
@@ -71,7 +71,7 @@ export default {
         </div>
       </form>
     </div>
-  </template>
+</template>
   
   <style>
   .login-container {
