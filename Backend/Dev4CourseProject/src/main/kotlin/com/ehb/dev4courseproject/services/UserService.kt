@@ -8,7 +8,9 @@ import com.ehb.dev4courseproject.models.User
 import com.ehb.dev4courseproject.repositories.UserRepository
 import com.ehb.dev4courseproject.dto.CreateUserRequest
 import com.ehb.dev4courseproject.dto.LoginUserRequest
+import com.ehb.dev4courseproject.repositories.ItemRepository
 import com.ehb.dev4courseproject.repositories.LoanRepository
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class UserService {
@@ -18,6 +20,10 @@ class UserService {
 
     @Autowired
     lateinit var userRepository: UserRepository
+
+    @Autowired
+    lateinit var itemRepository: ItemRepository
+
 
     fun getAllUsers(): List<User> {
         return userRepository.findAll()
@@ -47,10 +53,11 @@ class UserService {
         return userRepository.save(user)
     }
 
+    @Transactional
     fun deleteUser(userId: Long): User {
         val user = userRepository.findById(userId)
         if (user.isPresent) {
-            loanRepository.deleteById(userId)
+            loanRepository.deleteByUserId(userId)
             userRepository.deleteById(userId)
             return user.get()
         } else {
