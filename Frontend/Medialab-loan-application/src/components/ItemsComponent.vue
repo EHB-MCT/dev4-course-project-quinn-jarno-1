@@ -215,7 +215,7 @@ mounted() {
     </div>
 
   </nav>
-  <h2>Items overview</h2>
+  <h2 class="items-overview">Items overview</h2>
   <div class="search-container">
     <input class="search-input" type="text" v-model="searchQuery" placeholder="Search item" />
   </div>
@@ -469,6 +469,18 @@ li {
 .bold-text2{
   color: red;
   font-weight: bold;
+}
+
+.loan-form h2{
+  width: 12%;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+
+.items-overview{
+  width: 20%;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
 
