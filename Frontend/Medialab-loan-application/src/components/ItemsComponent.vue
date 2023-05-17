@@ -7,18 +7,12 @@ data() {
   filteredItems: [],
   user: [],
   selectedItemId: null,
-        updatedItem: {
-          id: null,
-          name: "",
-          description: "",
-          isLoanedOut: false
-        },
-        createdItem: {
-          id: null,
-          name: "",
-          description: "",
-          isLoanedOut: false
-        },
+  updatedItem: {
+    id: null,
+    name: "",
+    description: "",
+    isLoanedOut: false
+  },
   }
 },
 
@@ -100,27 +94,6 @@ mounted() {
         console.error(error);
       });
     },
-    
-  createItem() {
-    fetch('http://localhost:9000/items', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(this.createdItem),
-    })
-        .then(response => {
-            if (response.ok) {
-              this.items.push(this.createdItem)
-              console.log(`Item With Name ${this.createdItem.name} Created`)
-            } else {
-                throw new Error(`Could not create item. ${this.createdItem} `);
-            }
-        })
-        .catch(error => {
-            console.error(error);
-    });
-  },
 
   // Delete Item
   // deleteItem(itemId) {
@@ -205,12 +178,6 @@ mounted() {
     </router-link>
   </nav>
   <h2>Items overview</h2>
-  <div>
-        <input type="text" v-model="createdItem.name" placeholder="Name" />
-        <input type="text" v-model="createdItem.description" placeholder="Description" />
-        <input type="hidden" v-model="createdItem.isLoanedOut" />
-        <button @click="createItem()">Create item</button>
-      </div>
   <div class="search-container">
     <input class="search-input" type="text" v-model="searchQuery" placeholder="Search item" />
   </div>
@@ -244,7 +211,6 @@ mounted() {
                   </div>
                   <div class="item-list-buttons">
                     <button v-if="!item.isLoanedOut" class="loan-button" @click="loanItem(user.id, item.id)">Lend Out</button>
-                    <span v-else></span>
                   </div>
                 </div>
                   <!-- <hr> -->
