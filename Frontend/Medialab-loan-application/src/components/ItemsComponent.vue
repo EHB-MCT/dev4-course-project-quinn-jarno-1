@@ -4,6 +4,7 @@ data() {
   return {
   searchQuery: '',
   showLoanForm: false,
+  showEndedLoans: false,
   loans: [],
   items: [],
   filteredItems: [],
@@ -74,7 +75,13 @@ mounted() {
   },
   
   // Lend out an item
-  loanItem(userId, itemId){
+  loanItem(userId, itemId, item){
+    const newItem = {
+        id: item.id,
+        name: item.name,
+        description: item.description,
+        isLoanedOut: true
+    }
     const token = localStorage.getItem('authToken');
     fetch('http://localhost:9000/loans', {
       method: 'POST',
@@ -86,11 +93,12 @@ mounted() {
     })
       .then(response => {
         if (response.ok) {
-          const index = this.items.findIndex(item => item.loan.id === this.item.id);
-            console.log(index)
-            if (index !== -1) {
-              this.items.splice(index, 1, this.item);
-            }
+          const index = this.items.findIndex(item => item.id === itemId);
+          console.log(index)
+          console.log(newItem)
+          if (index !== -1) {
+            this.items.splice(index, 1, newItem);
+          }
           console.log("SUCCES" + response)
           return response.text();
         } else {
@@ -114,12 +122,24 @@ mounted() {
           console.error(error);
         });
 
-      this.showLoanForm = true;
+      this.showLoanForm = !this.showLoanForm;
     },
+
     closeLoanForm() {
       this.showLoanForm = false;
     },
 
+    toggleEndedLoans(){
+      this.showEndedLoans = !this.showEndedLoans
+    },
+
+    openEndedLoans(){
+      this.showEndedLoans = true
+    },
+
+    closeEndedLoans() {
+      this.showEndedLoans = false
+    },
   // Delete Item
   // deleteItem(itemId) {
   //   fetch(`http://localhost:9000/items/${itemId}`, {
@@ -201,25 +221,41 @@ mounted() {
     <router-link to="/admin" v-if="user && user.role === 'admin'">
       Dashboard
     </router-link>
+  </nav>
 
-    <button class="loanButton" @click="openLoanForm">View Loans</button>
-    <div v-if="showLoanForm" class="loan-form">
+    <h3 class="clickable-title" @click="openLoanForm">View My Loans</h3>
+    <div v-show="showLoanForm" class="loan-form">
       <h2>My Loans</h2>
+
+      <h3 class="clickable-title" @click="toggleEndedLoans">View Your Loan History</h3>
+      
       <ul>
-        <li v-for="loan in loans" :key="loan.id">
-          <h3>{{ loan.item.name }}</h3>
-          <p> <i>{{ loan.item.description }}</i> </p>
-          <h4> Loan Date: {{ loan.loanDate }}</h4>
-          <h4> Due Date: {{ loan.dueDate }}</h4>
-          <p class="bold-text" v-if="loan.returned">Item has been returned</p>
-          <p class="bold-text2" v-if="!loan.returned">Item not yet returned</p>
+        <li v-for="loan in loans" :key="loan">
+          <div v-show="showEndedLoans">
+              <div class="my-loans" v-if="loan.returned">    
+                  <h3>{{ loan.item.name }}</h3>
+                  <p> <i>{{ loan.item.description }}</i> </p>
+                  <h4> Loan Date: {{ loan.loanDate }}</h4>
+                  <h4> Due Date: {{ loan.dueDate }}</h4>
+                  <p class="green-text" v-if="loan.returned">Item has been returned</p>
+                  <p class="red-text" v-if="!loan.returned">Item not yet returned</p>
+              </div>
+          </div>
+
+          <div class="my-loans" v-if="!loan.returned">          
+            <h3>{{ loan.item.name }}</h3>
+            <p> <i>{{ loan.item.description }}</i> </p>
+            <h4> Loan Date: {{ loan.loanDate }}</h4>
+            <h4> Due Date: <span class="bold-text">{{ loan.dueDate }}</span></h4>
+            <p class="green-text" v-if="loan.returned">Item has been returned</p>
+            <p class="red-text" v-if="!loan.returned">Item not yet returned</p>
+          </div>
         </li>
       </ul>
 
-      <button class="loanClose" @click="closeLoanForm">Close</button>
+      <!-- <button class="loanClose" @click="closeLoanForm">Close</button> -->
     </div>
 
-  </nav>
   <h2 class="items-overview">Items overview</h2>
   <div class="search-container">
     <input class="search-input" type="text" v-model="searchQuery" placeholder="Search item" />
@@ -236,7 +272,7 @@ mounted() {
                       <span class="available" v-else>Available</span>
                     </div>
                     <div class="item-list-buttons">
-                      <button v-if="!item.isLoanedOut" class="loan-button" @click="loanItem(user.id, item.id)">Lend Out</button>
+                      <button v-if="!item.isLoanedOut" class="loan-button" @click="loanItem(user.id, item.id, item)">Lend Out</button>
                       <span v-else></span>
                     </div>
                   </div>
@@ -253,7 +289,7 @@ mounted() {
                     <span class="available" v-else>Available</span>
                   </div>
                   <div class="item-list-buttons">
-                    <button v-if="!item.isLoanedOut" class="loan-button" @click="loanItem(user.id, item.id)">Lend Out</button>
+                    <button v-if="!item.isLoanedOut" class="loan-button" @click="loanItem(user.id, item.id, item)">Lend Out</button>
                   </div>
                 </div>
                   <!-- <hr> -->
@@ -263,51 +299,64 @@ mounted() {
           </ul>
     </div>
     
-  </template>
-  <style>
-  ul {
-    list-style-type: none;
-    padding: 0;
-  }
-  
-  li {
-    margin-bottom: 20px;
-  }
-  
-  h2 {
-    font-size: 40px;
-    margin-bottom: 20px;
-    font-weight: bold;
-  }
-  
-  h3 {
-    font-size: 20px;
-    margin-bottom: 5px;
-    font-weight: bold;
-  }
-  
-  p {
-    margin-bottom: 10px;
-  }
-  
-  span {
-    font-weight: lighter;
-    margin-bottom: 5px;
-  }
+</template>
+<style>
+nav {
+ margin-bottom: 1em;
+}
 
-  .loanButton {
-  background-color: #ffffff;
-  color: rgb(0, 128, 255);
-  border: none;
-  padding: 10px 20px;
-  padding-left: 0;
-  text-align: center;
-  text-decoration: none;
-  display: inline-block;
-  font-size: 15px;
-  cursor: pointer;
-  border-radius: 4px;
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+  
+h2 {
+  font-size: 40px;
+  margin-bottom: 0;
   font-weight: bold;
+}
+
+h3 {
+  font-size: 20px;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+p {
+  margin-bottom: 10px;
+}
+
+span {
+  font-weight: lighter;
+  margin-bottom: 5px;
+}
+
+.clickable-title {
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.clickable-title:hover {
+  background-color: lightgray;
+}
+
+.clickable-title:active {
+  background-color: darkgray;
+}
+
+.loanButton {
+background-color: #ffffff;
+color: rgb(0, 128, 255);
+border: none;
+padding: 10px 20px;
+padding-left: 0;
+text-align: center;
+text-decoration: none;
+display: inline-block;
+font-size: 15px;
+cursor: pointer;
+border-radius: 4px;
+font-weight: bold;
 }
 
 .loanClose{
@@ -340,7 +389,7 @@ mounted() {
   margin-top: 20px;
 }
 
-  .delete-button {
+.delete-button {
   background-color: hsl(0, 0%, 0%);
   color: rgb(255, 255, 255);
   border: none;
@@ -430,7 +479,9 @@ mounted() {
   font-weight: bold;
 }
 
-li {
+
+.item-list,
+.my-loans {
   /* display: flex; */
   /* width: 100%; */
   margin-bottom: 20px;
@@ -467,26 +518,32 @@ li {
 .loan-list-buttons button {
   margin-bottom: 1em;
 }
+
 .bold-text{
+  font-weight: bold;
+}
+
+.green-text{
   color: green;
   font-weight: bold;
 }
-.bold-text2{
+.red-text{
   color: red;
   font-weight: bold;
 }
 
-.loan-form h2{
-  width: 12%;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
 .items-overview{
-  width: 20%;
-  margin-top: 20px;
+  text-align: left;
+  width: 100%;
+  /* margin-top: 20px; */
   margin-bottom: 20px;
 }
 
+.loan-form h2 {
+  text-align: left;
+  width: 100%;
+  /* margin-top: 20px; */
+  margin-bottom: 0;
+}
 
-  </style>
+</style>
