@@ -53,7 +53,9 @@ export default {
 </script>
 
 <template>
+  
     <div class="login-container">
+      <img alt="Vue logo" class="logo" src="../assets/ehblogo.jpg" width="225" height="225" />
       <div class="login-form">
         <h2>Login</h2>
         <div class="form-group">
@@ -76,9 +78,11 @@ export default {
 <style>
 .login-container {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   height: 90vh;
+  padding: auto;
 }
 
 .login-form {
