@@ -29,6 +29,12 @@ class LoanController {
         return loans;
     }
 
+    @GetMapping("/{userId}")
+    fun getUserLoans(@PathVariable userId: Long): List<Loan> {
+        val loans = loanService.getLoansByUserId(userId);
+        return loans;
+    }
+
     // Create A New Loan
     @PostMapping
     fun loanItem(@RequestHeader(HttpHeaders.AUTHORIZATION) token: String, @RequestBody loanRequest: NewLoanRequest): Loan {

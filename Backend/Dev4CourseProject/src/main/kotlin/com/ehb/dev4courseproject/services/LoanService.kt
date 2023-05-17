@@ -24,6 +24,10 @@ class LoanService() {
         return loanRepository.findAll();
     }
 
+    fun getLoansByUserId(userId: Long): List<Loan> {
+        return loanRepository.findByUserId(userId)
+    }
+
     fun newLoan(loanRequest: NewLoanRequest): Loan {
         val user = userRepository.findById(loanRequest.userId)
             .orElseThrow { EntityNotFoundException("User not found with ID ${loanRequest.userId}") }

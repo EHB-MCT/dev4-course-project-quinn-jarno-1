@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository
 
 
 interface LoanRepository : JpaRepository<Loan, Long> {
+    fun findByUserId(userId: Long): List<Loan>
     fun deleteByUserId(userId: Long)
     fun deleteByItemId(itemId: Long)
 }
