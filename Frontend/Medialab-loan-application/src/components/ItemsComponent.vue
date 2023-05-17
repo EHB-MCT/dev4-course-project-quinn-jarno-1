@@ -98,11 +98,12 @@ mounted() {
     },
 
     openLoanForm(user) {
-      const userId = user.id; 
+      const userId = this.user.id; 
       fetch(`http://localhost:9000/loans/${userId}`)
         .then(response => response.json())
         .then(data => {
           this.loans = data;
+          console.log(data);
         })
         .catch(error => {
           console.error(error);
@@ -201,7 +202,7 @@ mounted() {
       <h3>List of Loans</h3>
       <ul>
         <li v-for="loan in loans" :key="loan.id">
-          <p>{{ loan.name }}</p>
+          <p>{{ loan.item.name }}</p>
           <p>{{ loan.description }}</p>
         </li>
       </ul>
