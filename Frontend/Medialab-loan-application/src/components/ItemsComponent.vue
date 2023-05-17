@@ -199,7 +199,7 @@ mounted() {
 
     <button class="loanButton" @click="openLoanForm">View Loans</button>
     <div v-if="showLoanForm" class="loan-form">
-      <h2>List of Loans</h2>
+      <h2>My Loans</h2>
       <ul>
         <li v-for="loan in loans" :key="loan.id">
           <h3>{{ loan.item.name }}</h3>
@@ -295,12 +295,14 @@ mounted() {
   color: rgb(0, 128, 255);
   border: none;
   padding: 10px 20px;
+  padding-left: 0;
   text-align: center;
   text-decoration: none;
   display: inline-block;
   font-size: 15px;
   cursor: pointer;
   border-radius: 4px;
+  font-weight: bold;
 }
 
 .loanClose{
