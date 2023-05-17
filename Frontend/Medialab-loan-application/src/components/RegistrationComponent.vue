@@ -73,14 +73,6 @@
           <label for="email">Email:</label>
           <input type="email" id="email" placeholder="email" v-model="email" required>
         </div>
-        <div class="form-group">
-          <label for="role">Role:</label>
-          <select id="role" v-model="role" required>
-            <option value="">Select Role</option>
-            <option value="admin">Admin</option>
-            <option value="user">User</option>
-          </select>
-        </div>
         <div class="form-actions">
           <button class="back-button" @click="back">Back</button>
           <button type="submit" class="register-button">Register</button>
