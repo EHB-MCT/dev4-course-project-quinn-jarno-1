@@ -53,7 +53,7 @@ class UserController {
     }
 
     // Deletes A User
-    @DeleteMapping("/{userId}")
+    @DeleteMapping("delete/{userId}")
     fun deleteUser(@PathVariable userId: Long): User {
        return userService.deleteUser(userId)
     }
