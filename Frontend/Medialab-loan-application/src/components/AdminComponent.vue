@@ -107,8 +107,17 @@ export default {
         });
     },
     
-    returnItem(loanId) {
+    returnItem(loanId, loan) {
       // const token = localStorage.getItem('authToken');
+      const newLoan = {
+        id: loan.id,
+        loanDate: loan.loanDate,
+        dueDate: loan.dueDate,
+        user: loan.user,
+        item: loan.item,
+        returned: true
+      }
+      
       fetch(`http://localhost:9000/loans/return/${loanId}`, {
         method: 'POST',
         headers: {
@@ -120,11 +129,13 @@ export default {
         .then(response => {
           console.log(response);
           if (response.ok) {
-            // const index = this.loanedItems.findIndex(loan => loan.id === loanId);
-            // if (index !== -1) {
-            //   this.loanedItems.splice(index, 1);
-            // }
-            // console.log("SUCCES" + response)
+            const index = this.loanedItems.findIndex(loan => loan.id === loanId);
+            console.log(index)
+            console.log(loan)
+            if (index !== -1) {
+              this.loanedItems.splice(index, 1, newLoan);
+            }
+            console.log("SUCCES" + response)
             return response.text();
            
           } else {
@@ -416,7 +427,9 @@ export default {
         <input type="text" v-model="createdItem.name" placeholder="Name" class="input-field"/>
         <input type="text" v-model="createdItem.description" placeholder="Description" class="input-field" />
         <input type="hidden" v-model="createdItem.isLoanedOut" />
-        <button class="create-button" @click="createItem()">Create item</button>
+        <div class="align-create-button">
+          <button class="create-button" @click="createItem()">Create item</button>
+        </div>
       </div>
       <ul>
         <li v-for="item in items" v-bind:key="item">
@@ -519,7 +532,7 @@ export default {
         <li v-for="loan in loanedItems" v-bind:key="loan">
           <div class="loan-list">
             <div class="loan-list-info">
-              <h3>Loan: {{ loan.id }} <span class="loan-ended" v-if="loan.returned">ENDED</span><span class="loan-active" v-else>ACTIVE</span></h3>
+              <h3>Loan: {{ loan.id }}</h3>
               <p> Item: {{loan.item.name }}</p>
               <p> User: {{ loan.user.username }} with ID: {{ loan.user.id }}</p>
               <h4> Loan Date: {{ loan.loanDate }}</h4>
@@ -531,8 +544,10 @@ export default {
               <span v-if="loan.returned">
               </span>
               <span v-else>
-                <button class="return-button" @click="returnItem(loan.id)">Return Item</button>
+                <button class="return-button" @click="returnItem(loan.id, loan)">Return Item</button>
               </span>
+              <h2><span class="loan-ended" v-if="loan.returned">ENDED</span><span class="loan-active" v-else>ACTIVE</span></h2>
+
             </div>
           </div>
           <!-- <hr> -->
@@ -577,6 +592,11 @@ export default {
   background-color: #45a049;
 }
 
+.align-create-button {
+  margin-top: 20px;
+  text-align: right;
+}
+
 .bold-text{
   font-weight: bold;
 }
@@ -589,13 +609,7 @@ export default {
 .loan-active{
   font-weight: bold;
   color: green;
-}
-
-li {
-  /* display: flex; */
-  /* width: 100%; */
-  margin-bottom: 20px;
-  border-bottom: 1px solid black;
+  float: right;
 }
 
 .item-list,
@@ -621,6 +635,11 @@ li {
   margin-top: auto;
   /* width: 50%;
   top: 50%; */
+}
+
+.loan-list-buttons {
+  display: flex;
+  flex-direction: column;
 }
 
 .user-list-buttons button,
