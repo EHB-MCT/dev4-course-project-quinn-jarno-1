@@ -199,15 +199,19 @@ mounted() {
 
     <button class="loanButton" @click="openLoanForm">View Loans</button>
     <div v-if="showLoanForm" class="loan-form">
-      <h3>List of Loans</h3>
+      <h2>List of Loans</h2>
       <ul>
         <li v-for="loan in loans" :key="loan.id">
-          <p>{{ loan.item.name }}</p>
-          <p>{{ loan.description }}</p>
+          <h3>{{ loan.item.name }}</h3>
+          <p> <i>{{ loan.item.description }}</i> </p>
+          <h4> Loan Date: {{ loan.loanDate }}</h4>
+          <h4> Due Date: {{ loan.dueDate }}</h4>
+          <p class="bold-text" v-if="loan.returned">Item has been returned</p>
+          <p class="bold-text2" v-if="!loan.returned">Item not yet returned</p>
         </li>
       </ul>
 
-      <button @click="closeLoanForm">Close</button>
+      <button class="loanClose" @click="closeLoanForm">Close</button>
     </div>
 
   </nav>
@@ -298,6 +302,20 @@ mounted() {
   cursor: pointer;
   border-radius: 4px;
 }
+
+.loanClose{
+  background-color: #af0000;
+  color: rgb(255, 255, 255);
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 15px;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
   .search-input {
   padding: 10px;
   border: 1px solid #ccc;
@@ -442,4 +460,14 @@ li {
 .loan-list-buttons button {
   margin-bottom: 1em;
 }
+.bold-text{
+  color: green;
+  font-weight: bold;
+}
+.bold-text2{
+  color: red;
+  font-weight: bold;
+}
+
+
   </style>
