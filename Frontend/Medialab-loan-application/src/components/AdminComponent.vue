@@ -250,18 +250,25 @@ export default {
     },
 
     // Create Item
+    // Need to refresh page to be able to edit it. doenst have id yet so need to fetch again from back end.
     createItem() {
+      const newItem = {
+        // id: this.createdItem.id,
+        name: this.createdItem.name,
+        description: this.createdItem.description,
+        isLoanedOut: this.createdItem.isLoanedOut
+      }
       fetch('http://localhost:9000/items', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(this.createdItem),
+        body: JSON.stringify(newItem),
       })
         .then(response => {
           if (response.ok) {
-            this.items.push(this.createdItem)
-            console.log(`Item With Name ${this.createdItem.name} Created`)
+            this.items.push(newItem);
+            console.log(`Item With ID & Name ${newItem.id} ${newItem.name} Created`)
           } else {
             throw new Error(`Could not create item. ${this.createdItem} `);
           }
@@ -406,12 +413,12 @@ export default {
     <div class="item">
       <h2 class="clickable-title" @click="toggleAllItems">Items overview</h2>
       <div v-show="showAllItems">
-          <div>
-            <input type="text" v-model="createdItem.name" placeholder="Name" />
-            <input type="text" v-model="createdItem.description" placeholder="Description" />
-            <input type="hidden" v-model="createdItem.isLoanedOut" />
-            <button @click="createItem()">Create item</button>
-          </div>
+      <div>
+        <input type="text" v-model="createdItem.name" placeholder="Name" />
+        <input type="text" v-model="createdItem.description" placeholder="Description" />
+        <input type="hidden" v-model="createdItem.isLoanedOut" />
+        <button @click="createItem()">Create item</button>
+      </div>
       <ul>
         <li v-for="item in items" v-bind:key="item">
           <div class="item-list">
