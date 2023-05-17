@@ -340,6 +340,12 @@ export default {
 </script>
 
 <template>
+<nav>
+    <router-link to="/items">
+      Back
+    </router-link>
+  </nav>
+
   <div v-if="user && user.role === 'admin'">
     
     <div class="item">
