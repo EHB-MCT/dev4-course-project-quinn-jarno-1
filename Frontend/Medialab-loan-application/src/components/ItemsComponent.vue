@@ -164,10 +164,12 @@ mounted() {
               <p>{{ item.description }}</p>
               <span class="unavailable" v-if="item.isLoanedOut">Unavailable</span>
               <span class="available" v-else>Available</span>
+              <div v-if="user && user.role === 'admin'">
               <button class="update-button" @click="editItem(item)">Update</button>
               <div v-if="item.id === selectedItemId" class="edit-form">
                 <input v-model="updatedItem.name" type="text" placeholder="Name" />
                 <textarea v-model="updatedItem.description" placeholder="Description"></textarea>
+              
                 <!-- <div class="loan-status">
         <button
           :class="{ active: updatedItem.isLoanedOut }"
@@ -188,6 +190,7 @@ mounted() {
                 </div>
                 </div>
               <button class="delete-button" @click="deleteItem(item.id)">Delete</button>
+            </div>
               <button class="delete-button" @click="loanItem(user.id, item.id)">Lend Out</button>
               <hr>
             </li>
