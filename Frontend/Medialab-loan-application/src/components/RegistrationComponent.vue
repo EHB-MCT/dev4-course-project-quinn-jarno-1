@@ -60,7 +60,7 @@
   <template>
     <div class="registration-container">
       <form class="registration-form" @submit.prevent="registerUser">
-        <h2>Registration Form</h2>
+        <h2>Register</h2>
         <div class="form-group">
           <label for="username">Username:</label>
           <input type="text" id="username" placeholder="Username" v-model="username" required>
