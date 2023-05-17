@@ -3,6 +3,8 @@ export default {
 data() {
   return {
   searchQuery: '',
+  showLoanForm: false,
+  loans: [],
   items: [],
   filteredItems: [],
   user: [],
@@ -95,6 +97,23 @@ mounted() {
       });
     },
 
+    openLoanForm(user) {
+      const userId = user.id; 
+      fetch(`http://localhost:9000/loans/${userId}`)
+        .then(response => response.json())
+        .then(data => {
+          this.loans = data;
+        })
+        .catch(error => {
+          console.error(error);
+        });
+
+      this.showLoanForm = true;
+    },
+    closeLoanForm() {
+      this.showLoanForm = false;
+    },
+
   // Delete Item
   // deleteItem(itemId) {
   //   fetch(`http://localhost:9000/items/${itemId}`, {
@@ -176,6 +195,20 @@ mounted() {
     <router-link to="/admin" v-if="user && user.role === 'admin'">
       Dashboard
     </router-link>
+
+    <button class="loanButton" @click="openLoanForm">View Loans</button>
+    <div v-if="showLoanForm" class="loan-form">
+      <h3>List of Loans</h3>
+      <ul>
+        <li v-for="loan in loans" :key="loan.id">
+          <p>{{ loan.name }}</p>
+          <p>{{ loan.description }}</p>
+        </li>
+      </ul>
+
+      <button @click="closeLoanForm">Close</button>
+    </div>
+
   </nav>
   <h2>Items overview</h2>
   <div class="search-container">
@@ -252,6 +285,18 @@ mounted() {
     margin-bottom: 5px;
   }
 
+  .loanButton {
+  background-color: #ffffff;
+  color: rgb(0, 128, 255);
+  border: none;
+  padding: 10px 20px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 15px;
+  cursor: pointer;
+  border-radius: 4px;
+}
   .search-input {
   padding: 10px;
   border: 1px solid #ccc;
