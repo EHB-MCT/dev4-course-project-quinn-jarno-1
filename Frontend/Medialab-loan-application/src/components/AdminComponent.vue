@@ -27,6 +27,9 @@ export default {
       password: "",
       email: "",
       // role: ""
+      },
+      updatedRole: {
+      role: ""
       }
 
     }
@@ -84,6 +87,38 @@ export default {
         .catch(error => {
           console.error(error);
         });
+    },
+
+    updateRole(userId) {
+      fetch(`http://localhost:9000/users/updateRole/${userId}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(this.updatedRole)
+      })
+        .then(response => {
+          if (response.ok) {
+            console.log("response OK")
+            const index = this.users.findIndex(user => user.id === this.updatedRole.id);
+            if (index !== -1) {
+              this.users.splice(index, 1, this.updatedRole);
+            }
+            this.cancelChange();
+          } else {
+            console.error('Role change failed.');
+          }
+        })
+        .catch(error => {
+          console.error(error);
+        });
+    },
+
+    cancelChange() {
+      this.updatedRole = {
+        role: ""
+      };
+
     },
 
     getLoans() {
@@ -228,6 +263,29 @@ export default {
 
     },
 
+    // DELETE USER
+    deleteUser(userId) {
+      fetch(`http://localhost:9000/users/${userId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      })
+        .then(response => {
+          console.log("clicked")
+          if (response.ok) {
+            const index = this.users.findIndex(user => user.id === userId);
+            if (index !== -1) {
+              this.users.splice(index, 1);
+            }
+          } else {
+            console.error('User deletion failed');
+          }
+        }).catch(error => {
+          console.error(error);
+        });
+    },
+
     //USER EDIT
     editUser(user) {
       this.selectedUserId = user.id;
@@ -334,6 +392,7 @@ export default {
       <h2 class="clickable-title" @click="toggleAllUsers">Users overview</h2>
       <div v-show="showAllUsers">
       <ul>
+        <!-- eslint-disable-next-line vue/valid-v-for -->
         <li v-for="uniqueUser in users" :key="user">
           <div class="user-list">
             <div class="user-list-info">
@@ -344,7 +403,18 @@ export default {
               <p>Role: {{ uniqueUser.role }}</p>
             </div>
             <div class="user-list-buttons">
+              <button class="modal-button" @click="showModal = true">Delete</button>
               <button class="update-button" @click="editUser(uniqueUser)">Edit</button>
+              <button class="update-button" @click="updateRole(uniqueUser)">Change Role</button>
+
+            </div>
+          </div>
+          <div v-if="showModal" class="modal">
+            <div class="modal-content">
+              <!-- Modal content goes here -->
+              <h1>Are you sure you want to delete this user?</h1>
+              <button class="modal-cancel-button" @click="showModal = false">Cancel</button>
+              <button class="delete-button" @click="deleteUser(user.id)">Delete</button>
             </div>
           </div>
 
