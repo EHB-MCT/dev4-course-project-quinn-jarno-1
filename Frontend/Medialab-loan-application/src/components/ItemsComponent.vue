@@ -2,8 +2,9 @@
 export default {
 data() {
   return {
-
+  searchQuery: '',
   items: [],
+  filteredItems: [],
   user: [],
   selectedItemId: null,
         updatedItem: {
@@ -16,11 +17,19 @@ data() {
   }
 },
 
+watch: {
+    searchQuery: function(newQuery) {
+      this.filterItems(newQuery);
+    }
+  },
+
 mounted() {
   this.getItems();
   this.getUser();
+  this.filterItems(this.searchQuery);
   // this.users = [];
 },
+
  methods: {
   // Gets All Items
   getItems(){
@@ -34,6 +43,20 @@ mounted() {
     console.error(error);
     });
   },
+  filterItems(query) {
+      if (query === '') {
+        this.filteredItems = this.items; // Show all items if query is empty
+      } else {
+        const lowerCaseQuery = query.toLowerCase().trim();
+        this.filteredItems = this.items.filter(item => {
+          return item.name.toLowerCase().includes(lowerCaseQuery);
+        });
+      }
+    },
+
+  executeSearch() {
+    this.filterItems(this.searchQuery);
+    },
 
   // Get Logged In User
   getUser() {
@@ -157,9 +180,12 @@ mounted() {
     </router-link>
   </nav>
   <h2>Items overview</h2>
+  <div class="search-container">
+    <input class="search-input" type="text" v-model="searchQuery" placeholder="Search item" />
+  </div>
     <div class="item">
           <ul>
-            <li v-for="item in items" v-bind:key="item">
+            <li v-for="item in filteredItems" :key="item">
               <h3>{{ item.name }}</h3>
               <p>{{ item.description }}</p>
               <span class="unavailable" v-if="item.isLoanedOut">Unavailable</span>
@@ -169,21 +195,7 @@ mounted() {
               <div v-if="item.id === selectedItemId" class="edit-form">
                 <input v-model="updatedItem.name" type="text" placeholder="Name" />
                 <textarea v-model="updatedItem.description" placeholder="Description"></textarea>
-              
-                <!-- <div class="loan-status">
-        <button
-          :class="{ active: updatedItem.isLoanedOut }"
-          @click="setLoanStatus(true)"
-        >
-          Loaned Out
-        </button>
-        <button
-          :class="{ active: !updatedItem.isLoanedOut }"
-          @click="setLoanStatus(false)"
-        >
-          Available
-        </button>
-      </div> -->
+          
                 <div class="form-buttons">
                 <button class="save-button" @click="updateItem">Save</button>
                 <button class="cancel-button" @click="cancelEdit">Cancel</button>
@@ -228,6 +240,23 @@ mounted() {
     font-weight: lighter;
     margin-bottom: 5px;
   }
+
+  .search-input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.search-button {
+  padding: 10px 15px;
+  background-color: #f2f2f2;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.item{
+  margin-top: 20px;
+}
 
   .delete-button {
   background-color: hsl(0, 0%, 0%);
