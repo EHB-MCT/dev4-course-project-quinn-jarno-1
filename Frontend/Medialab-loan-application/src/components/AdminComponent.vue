@@ -5,7 +5,8 @@ export default {
   data() {
     return {
 
-      showModal: false,
+      showModalItem: false,
+      showModalUser: false,
       showAllItems: false,
       showAllUsers: false,
       showAllLoans: false,
@@ -265,14 +266,15 @@ export default {
 
     // DELETE USER
     deleteUser(userId) {
-      fetch(`http://localhost:9000/users/${userId}`, {
+      fetch(`http://localhost:9000/users/delete/${userId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ userId: userId }),
       })
         .then(response => {
-          console.log("clicked")
+          console.log(`clicked ${userId}`)
           if (response.ok) {
             const index = this.users.findIndex(user => user.id === userId);
             if (index !== -1) {
@@ -362,7 +364,7 @@ export default {
             </div>
   
             <div class="item-list-buttons">            
-              <button class="modal-button" @click="showModal = true">Delete</button>
+              <button class="modal-button" @click="showModalItem = true">Delete</button>
               <button class="update-button" @click="editItem(item)">Update</button>
             </div>
           </div>
@@ -378,12 +380,12 @@ export default {
           </div>
 
           <!-- Delete -->
-          <div v-if="showModal" class="modal">
+          <div v-if="showModalItem" class="modal">
             <div class="modal-content">
               <!-- Modal content goes here -->
               <h1>Are you sure you want to delete this item?</h1>
-              <button class="modal-cancel-button" @click="showModal = false">Cancel</button>
-              <button class="delete-button" @click="deleteItem(item.id)">Delete</button>
+              <button class="modal-cancel-button" @click="showModalItem = false">Cancel</button>
+              <button class="delete-button" @click="deleteItem(item.id), showModalItem = false">Delete</button>
             </div>
           </div>
           <!-- <button class="delete-button" @click="loanItem(user.id, item.id)">Lend Out</button> -->
@@ -409,18 +411,18 @@ export default {
               <p>Role: {{ uniqueUser.role }}</p>
             </div>
             <div class="user-list-buttons">
-              <button class="modal-button" @click="showModal = true">Delete</button>
+              <button class="modal-button" @click="showModalUser = true">Delete</button>
               <button class="update-button" @click="editUser(uniqueUser)">Edit</button>
-              <button class="update-button" @click="updateRole(uniqueUser)">Change Role</button>
+              <button class="update-button" @click="updateRole(uniqueUser.id)">Change Role</button>
 
             </div>
           </div>
-          <div v-if="showModal" class="modal">
+          <div v-if="showModalUser" class="modal">
             <div class="modal-content">
               <!-- Modal content goes here -->
               <h1>Are you sure you want to delete this user?</h1>
-              <button class="modal-cancel-button" @click="showModal = false">Cancel</button>
-              <button class="delete-button" @click="deleteUser(user.id)">Delete</button>
+              <button class="modal-cancel-button" @click="showModalUser = false">Cancel</button>
+              <button class="delete-button" @click="deleteUser(uniqueUser.id), showModalUser = false">Delete</button>
             </div>
           </div>
 
@@ -608,14 +610,14 @@ span {
 .update-button,
 .save-button,
 .return-button {
-  background-color: green;
+  background-color: rgb(24, 105, 255);
 }
 
 .modal-cancel-button:hover,
 .update-button:hover,
 .save-button:hover,
 .return-button:hover {
-  background-color: rgba(0, 128, 0, 0.483);
+  background-color: rgb(24, 105, 255, 0.483);
 } 
 
 .modal-button,
