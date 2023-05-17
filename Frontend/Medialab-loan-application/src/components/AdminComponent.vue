@@ -372,7 +372,6 @@ export default {
             console.log(index)
             if (index !== -1) {
               this.users.splice(index, 1, this.updatedUser);
-              
             }
             this.cancelUserUpdate();
           } else {

@@ -86,6 +86,11 @@ mounted() {
     })
       .then(response => {
         if (response.ok) {
+          const index = this.items.findIndex(item => item.loan.id === this.item.id);
+            console.log(index)
+            if (index !== -1) {
+              this.items.splice(index, 1, this.item);
+            }
           console.log("SUCCES" + response)
           return response.text();
         } else {
