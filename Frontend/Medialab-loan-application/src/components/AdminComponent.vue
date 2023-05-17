@@ -413,11 +413,11 @@ export default {
     <div class="item">
       <h2 class="clickable-title" @click="toggleAllItems">Items overview</h2>
       <div v-show="showAllItems">
-      <div>
-        <input type="text" v-model="createdItem.name" placeholder="Name" />
-        <input type="text" v-model="createdItem.description" placeholder="Description" />
+      <div class="createItem">
+        <input type="text" v-model="createdItem.name" placeholder="Name" class="input-field"/>
+        <input type="text" v-model="createdItem.description" placeholder="Description" class="input-field" />
         <input type="hidden" v-model="createdItem.isLoanedOut" />
-        <button @click="createItem()">Create item</button>
+        <button class="create-button" @click="createItem()">Create item</button>
       </div>
       <ul>
         <li v-for="item in items" v-bind:key="item">
@@ -550,6 +550,34 @@ export default {
 </template>
 
 <style>
+.createItem {
+  display: flex;
+  flex-direction: column;
+  align-items: left;
+  margin-bottom: 20px;
+}
+
+.input-field {
+  margin-bottom: 20px;
+  padding: 10px;
+  width: 200px;
+}
+
+.create-button {
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  width: 150px;
+  margin-left: 6px;
+}
+
+.create-button:hover {
+  background-color: #45a049;
+}
+
 .bold-text{
   font-weight: bold;
 }
