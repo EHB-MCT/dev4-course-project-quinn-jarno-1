@@ -9,12 +9,17 @@ import com.ehb.dev4courseproject.models.Item
 import com.ehb.dev4courseproject.dto.CreateItemRequest
 import com.ehb.dev4courseproject.dto.CreateUserRequest
 import com.ehb.dev4courseproject.models.User
+import com.ehb.dev4courseproject.repositories.LoanRepository
+import org.springframework.transaction.annotation.Transactional
 
 @Service
 class ItemService {
 
     @Autowired
     lateinit var itemRepository: ItemRepository
+
+    @Autowired
+    lateinit var loanRepository: LoanRepository
 
     fun getAllItems(): List<Item> {
         return itemRepository.findAll()
@@ -37,9 +42,11 @@ class ItemService {
         return itemRepository.save(item)
     }
 
+    @Transactional
     fun deleteItem(itemId: Long): Item {
         val item = itemRepository.findById(itemId)
         if (item.isPresent) {
+            loanRepository.deleteByItemId(itemId)
             itemRepository.deleteById(itemId)
             return item.get()
         } else {
