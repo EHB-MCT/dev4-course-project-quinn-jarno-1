@@ -38,7 +38,6 @@ h3 {
 
 .greetings{
   margin-left: 5%;
-  /* margin-top: 7%; */
   width: 1000px;
 }
 
