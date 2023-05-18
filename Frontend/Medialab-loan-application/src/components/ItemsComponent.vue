@@ -20,19 +20,18 @@ data() {
 },
 
 watch: {
-    searchQuery: function(newQuery) {
-      this.filterItems(newQuery);
-    }
-  },
+  searchQuery: function(newQuery) {
+    this.filterItems(newQuery);
+  }
+},
 
 mounted() {
   this.getItems();
   this.getUser();
   this.filterItems(this.searchQuery);
-  // this.users = [];
 },
 
- methods: {
+methods: {
   // Gets All Items
   getItems(){
     fetch('http://localhost:9000/items')
@@ -45,6 +44,7 @@ mounted() {
     console.error(error);
     });
   },
+
   filterItems(query) {
       if (query === '') {
         this.filteredItems = this.items; // Show all items if query is empty
@@ -60,20 +60,20 @@ mounted() {
     this.filterItems(this.searchQuery);
     },
 
-    
-    // Get Logged In User
-    getUser() {
-      fetch(`http://localhost:9000/users/token/${localStorage.getItem('authToken')}`)
-      .then(response => response.json())
-      .then(data => {
-        this.user = data;
-        console.log(data);
-      })
-      .catch(error => {
-        console.error(error);
-      });
+
+  // Get Logged In User
+  getUser() {
+    fetch(`http://localhost:9000/users/token/${localStorage.getItem('authToken')}`)
+    .then(response => response.json())
+    .then(data => {
+      this.user = data;
+      console.log(data);
+    })
+    .catch(error => {
+      console.error(error);
+    });
   },
-  
+    
   // Lend out an item
   loanItem(userId, itemId, item){
     const newItem = {
@@ -110,108 +110,30 @@ mounted() {
       });
     },
 
-    openLoanForm(user) {
-      const userId = this.user.id; 
-      fetch(`http://localhost:9000/loans/${userId}`)
-        .then(response => response.json())
-        .then(data => {
-          this.loans = data;
-          console.log(data);
-        })
-        .catch(error => {
-          console.error(error);
-        });
+  openLoanForm(user) {
+    const userId = this.user.id; 
+    fetch(`http://localhost:9000/loans/${userId}`)
+      .then(response => response.json())
+      .then(data => {
+        this.loans = data;
+        console.log(data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
 
-      this.showLoanForm = !this.showLoanForm;
-    },
+    this.showLoanForm = !this.showLoanForm;
+  },
 
-    closeLoanForm() {
-      this.showLoanForm = false;
-    },
+  toggleEndedLoans(){
+    this.showEndedLoans = !this.showEndedLoans
+  },
 
-    toggleEndedLoans(){
-      this.showEndedLoans = !this.showEndedLoans
-    },
+  },
 
-    openEndedLoans(){
-      this.showEndedLoans = true
-    },
-
-    closeEndedLoans() {
-      this.showEndedLoans = false
-    },
-  // Delete Item
-  // deleteItem(itemId) {
-  //   fetch(`http://localhost:9000/items/${itemId}`, {
-  //     method: 'DELETE',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //   })
-  //     .then(response => {
-  //       console.log(`Item With ID ${itemId} Deleted`)
-  //       if (response.ok) {
-  //       const index = this.items.findIndex(item => item.id === itemId);
-  //       if (index !== -1) {
-  //         this.items.splice(index, 1);
-  //       }
-  //     } else {
-  //       console.error('Item deletion failed: Item may be Loaned Out');
-  //     }
-  //   }).catch(error => {
-  //       console.error(error);
-  //     });
-  // },
-
-  // Edit Item
-  editItem(item) {
-      this.selectedItemId = item.id;
-      this.updatedItem = { ...item };
-      console.log("response OK")
-    },
-
-  // updateItem() {
-  //   fetch(`http://localhost:9000/items/update/${this.selectedItemId}`, {
-  //     method: 'PUT',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(this.updatedItem)
-  //   })
-  //     .then(response => {
-  //       if (response.ok) {
-  //           console.log("response OK")
-  //           const index = this.items.findIndex(item => item.id === this.updatedItem.id);
-  //           if (index !== -1) {
-  //             this.items.splice(index, 1, this.updatedItem);
-  //           }
-  //           this.cancelEdit();
-  //         } else {
-  //           console.error('Item update failed.');
-  //         }
-  //       })
-  //       .catch(error => {
-  //         console.error(error);
-  //       });
-  // },
-  
-  cancelEdit() {
-      this.selectedItemId = null;
-      this.updatedItem = {
-        id: null,
-        name: "",
-        description: "",
-        loanStatus: false
-      };
-
- },
-},
-
- updated() {
-  
-//  console.log(this.items);
+  updated() {
+  }
 }
- }
 
 
 </script>
@@ -253,7 +175,6 @@ mounted() {
         </li>
       </ul>
 
-      <!-- <button class="loanClose" @click="closeLoanForm">Close</button> -->
     </div>
 
   <h2 class="items-overview">Items overview</h2>
@@ -276,7 +197,6 @@ mounted() {
                       <span v-else></span>
                     </div>
                   </div>
-                  <!-- <hr> -->
               </li>
             </div>
             <div v-else>
@@ -292,7 +212,6 @@ mounted() {
                     <button v-if="!item.isLoanedOut" class="loan-button" @click="loanItem(user.id, item.id, item)">Lend Out</button>
                   </div>
                 </div>
-                  <!-- <hr> -->
               </li>
             </div>
 
@@ -493,7 +412,6 @@ font-weight: bold;
 .loan-list{
   display: flex;
   width: 100%;
-  /* margin-bottom: 20px; */
 }
 
 .item-list-info,
@@ -509,8 +427,6 @@ font-weight: bold;
 .loan-list-buttons {
   margin-left: auto;
   margin-top: auto;
-  /* width: 50%;
-  top: 50%; */
 }
 
 .user-list-buttons button,
@@ -535,14 +451,12 @@ font-weight: bold;
 .items-overview{
   text-align: left;
   width: 100%;
-  /* margin-top: 20px; */
   margin-bottom: 20px;
 }
 
 .loan-form h2 {
   text-align: left;
   width: 100%;
-  /* margin-top: 20px; */
   margin-bottom: 0;
 }
 

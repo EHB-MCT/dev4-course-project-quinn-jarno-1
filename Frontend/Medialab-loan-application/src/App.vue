@@ -1,9 +1,5 @@
 <script setup>
   import { RouterView } from 'vue-router'
-  // import HelloWorld from './components/BannerComponent.vue'
-  // import ItemsComponent from './components/ItemsComponent.vue'
-  // import UsersComponent from './components/UsersComponent.vue'
-  // import LoginComponent from './components/LoginComponent.vue'
 </script>
 
 <template>
@@ -11,23 +7,6 @@
     <router-view></router-view>
   </div>
 </template>
-
-
-<!-- <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="./assets/ehblogo.jpg" width="225" height="225" />
-
-    <div class="wrapper">
-      <HelloWorld msg="Medialab Loan Application" />
-    </div>
-  </header>
-
-  <main>  
-    <LoginComponent/>
-    <ItemsComponent/>
-    <UsersComponent/>
-  </main>
-</template> -->
 
 <style scoped>
 header {

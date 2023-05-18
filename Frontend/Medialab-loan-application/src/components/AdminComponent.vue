@@ -2,410 +2,360 @@
 
 export default {
 
-  data() {
-    return {
-      showAllItems: false,
-      showAllUsers: false,
-      showAllLoans: false,
-      items: [],
-      loanedItems: [],
-      users: [],
-      user: [],
-      selectedItemId: null,
-      selectedDeleteItemId: null,
-      selectedUserId: null,
-      selectedDeleteUserId: null,
-      updatedItem: {
-        id: null,
-        name: "",
-        description: "",
-        isLoanedOut: false
-      },
-      createdItem: {
-        id: null,
-        name: "",
-        description: "",
-        isLoanedOut: false
-      },
-      updatedUser: {
-        id: null,
-        username: "",
-        password: "",
-        email: "",
-        role: ""
-      },
-      // updatedRole: {
-      //   role: ""
-      // }
-      // role: ""
-    }
-  },
-
-  mounted() {
-    this.getItems();
-    this.getUsers();
-    this.getUser();
-    this.getLoans();
-  },
-  methods: {
-    toggleAllItems() {
-      this.showAllItems = !this.showAllItems; 
+data() {
+  return {
+    showAllItems: false,
+    showAllUsers: false,
+    showAllLoans: false,
+    items: [],
+    loanedItems: [],
+    users: [],
+    user: [],
+    selectedItemId: null,
+    selectedDeleteItemId: null,
+    selectedUserId: null,
+    selectedDeleteUserId: null,
+    updatedItem: {
+      id: null,
+      name: "",
+      description: "",
+      isLoanedOut: false
     },
-    toggleAllUsers() {
-      this.showAllUsers = !this.showAllUsers; 
+    createdItem: {
+      id: null,
+      name: "",
+      description: "",
+      isLoanedOut: false
     },
-    toggleAllLoans() {
-      this.showAllLoans = !this.showAllLoans; 
+    updatedUser: {
+      id: null,
+      username: "",
+      password: "",
+      email: "",
+      role: ""
     },
-    // Gets All Items
-    getItems() {
-      fetch('http://localhost:9000/items')
-        .then(response => response.json())
-        .then(data => {
-          this.items = data;
-          console.log(data);
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    },
-
-    getUsers() {
-      fetch('http://localhost:9000/users')
-        .then(response => response.json())
-        .then(data => {
-          this.users = data;
-          console.log(data);
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    },
-
-      // Get Logged In User
-    getUser() {
-      fetch(`http://localhost:9000/users/token/${localStorage.getItem('authToken')}`)
-        .then(response => response.json())
-        .then(data => {
-          this.user = data;
-          console.log(data);
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    },
-
-    getLoans() {
-      fetch('http://localhost:9000/loans')
-        .then(response => response.json())
-        .then(data => {
-          this.loanedItems = data;
-          console.log(data);
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    },
-    
-    returnItem(loanId, loan) {
-      // const token = localStorage.getItem('authToken');
-      const newLoan = {
-        id: loan.id,
-        loanDate: loan.loanDate,
-        dueDate: loan.dueDate,
-        user: loan.user,
-        item: loan.item,
-        returned: true
-      }
-      
-      fetch(`http://localhost:9000/loans/return/${loanId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          // 'Authorization': `${token}`
-        },
-        body: JSON.stringify({ loanId: loanId}),
-      })
-        .then(response => {
-          console.log(response);
-          if (response.ok) {
-            const index = this.loanedItems.findIndex(loan => loan.id === loanId);
-            console.log(index)
-            console.log(loan)
-            if (index !== -1) {
-              this.loanedItems.splice(index, 1, newLoan);
-            }
-            console.log("SUCCES" + response)
-            return response.text();
-           
-          } else {
-            throw new Error(response);
-          }
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    },
-
-    // Get Logged In User
-    // getUser() {
-    //   fetch(`http://localhost:9000/users/token/${localStorage.getItem('authToken')}`)
-    //     .then(response => response.json())
-    //     .then(data => {
-    //       this.user = data;
-    //       console.log(data);
-    //     })
-    //     .catch(error => {
-    //       console.error(error);
-    //     });
-    // },
-
-    // Lend out an item
-    // loanItem(userId, itemId) {
-    //   const token = localStorage.getItem('authToken');
-    //   fetch('http://localhost:9000/loans', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //       'Authorization': `${token}`
-    //     },
-    //     body: JSON.stringify({ userId: userId, itemId: itemId }),
-    //   })
-    //     .then(response => {
-    //       if (response.ok) {
-    //         console.log("SUCCES" + response)
-    //         return response.text();
-    //       } else {
-    //         throw new Error(`Invalid credentials ${userId} ${itemId} ${token}`);
-    //       }
-    //     })
-    //     .catch(error => {
-    //       console.error(error);
-    //     });
-    // },
-
-    // Delete Item
-    deleteItemModal(item) {
-      this.selectedDeleteItemId = item.id;
-      this.updatedItem = { ...item };
-      console.log(`${this.selectedDeleteItemId}`)
-    },
-      
-    deleteItem(itemId) {
-      console.log(itemId)
-      fetch(`http://localhost:9000/items/${itemId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      })
-        .then(response => {
-          if (response.ok) {
-            const index = this.items.findIndex(item => item.id === itemId);
-            if (index !== -1) {
-              this.items.splice(index, 1);
-            }
-          } else {
-            console.error('Item deletion failed: Item may be Loaned Out');
-          }
-        }).catch(error => {
-          console.error(error);
-        });
-    },
-
-    cancelItemDelete() {
-      this.selectedDeleteItemId = null;
-    },
-
-    // Edit Item
-    editItem(item) {
-      this.selectedItemId = item.id;
-      this.updatedItem = { ...item };
-      console.log("response OK")
-    },
-
-    updateItem() {
-      fetch(`http://localhost:9000/items/update/${this.selectedItemId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(this.updatedItem)
-      })
-        .then(response => {
-          if (response.ok) {
-            console.log("response OK")
-            const index = this.items.findIndex(item => item.id === this.updatedItem.id);
-            if (index !== -1) {
-              this.items.splice(index, 1, this.updatedItem);
-            }
-            this.cancelItemUpdate();
-          } else {
-            console.error('Item update failed.');
-          }
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    },
-
-    cancelItemUpdate() {
-      this.selectedItemId = null;
-      this.updatedItem = {
-        id: null,
-        name: "",
-        description: "",
-        loanStatus: false
-      };
-
-    },
-
-    // Create Item
-    // Need to refresh page to be able to edit it. doenst have id yet so need to fetch again from back end.
-    createItem() {
-      const newItem = {
-        // id: this.createdItem.id,
-        name: this.createdItem.name,
-        description: this.createdItem.description,
-        isLoanedOut: this.createdItem.isLoanedOut
-      }
-      fetch('http://localhost:9000/items', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newItem),
-      })
-        .then(response => {
-          if (response.ok) {
-            this.items.push(newItem);
-            console.log(`Item With ID & Name ${newItem.id} ${newItem.name} Created`)
-          } else {
-            throw new Error(`Could not create item. ${this.createdItem} `);
-          }
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    },
-
-    // DELETE USER
-    deleteUserModal(user){
-      this.selectedDeleteUserId = user.id;
-      this.updatedUser = { ...user };
-      console.log(`${this.selectedDeleteUserId}`)
-    },
-
-    deleteUser(userId) {
-      fetch(`http://localhost:9000/users/delete/${userId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ userId: userId }),
-      })
-        .then(response => {
-          console.log(`clicked ${userId}`)
-          if (response.ok) {
-            const index = this.users.findIndex(user => user.id === userId);
-            if (index !== -1) {
-              this.users.splice(index, 1);
-            }
-          } else {
-            console.error('User deletion failed');
-          }
-        }).catch(error => {
-          console.error(error);
-        });
-    },
-
-    cancelUserDelete() {
-      this.selectedDeleteUserId = null;
-    },
-
-    //USER EDIT
-    editUser(user) {
-      this.selectedUserId = user.id;
-      this.updatedUser = { ...user };
-      console.log(`${this.selectedUserId}`)
-    },
-
-    updateUser() {
-      fetch(`http://localhost:9000/users/update/${this.selectedUserId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(this.updatedUser)
-      })
-        .then(response => {
-          console.log("response OK")
-          if (response.ok) {
-            const index = this.users.findIndex(user => user.id === this.updatedUser.id);
-            if (index !== -1) {
-              this.users.splice(index, 1, this.updatedUser);
-              
-            }
-            this.cancelUserUpdate();
-          } else {
-            console.error('User update failed.');
-          }
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    },
-    
-    cancelUserUpdate() {
-      this.selectedUserId = null;
-      this.updatedUser = {
-        id: null,
-        username: "",
-        password: "",
-        email: "",
-        role: ""
-      };
-
-    },
-    
-    updateRole(userId) {
-      fetch(`http://localhost:9000/users/updateRole/${userId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(this.updatedUser)
-      })
-        .then(response => {
-          if (response.ok) {
-            console.log("response OK")
-            const index = this.users.findIndex(user => user.id === this.updatedUser.id);
-            console.log(index)
-            if (index !== -1) {
-              this.users.splice(index, 1, this.updatedUser);
-            }
-            this.cancelUserUpdate();
-          } else {
-            console.error('Role change failed.');
-          }
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    },
-
-    // cancelChange() {
-    //   this.updatedRole = {
-    //     role: ""
-    //   };
-
-    // },
-
-  },
-
-  updated() {
-    // console.log(this.items);
   }
+},
+
+mounted() {
+  this.getItems();
+  this.getUsers();
+  this.getUser();
+  this.getLoans();
+},
+
+methods: {
+  toggleAllItems() {
+    this.showAllItems = !this.showAllItems; 
+  },
+  toggleAllUsers() {
+    this.showAllUsers = !this.showAllUsers; 
+  },
+  toggleAllLoans() {
+    this.showAllLoans = !this.showAllLoans; 
+  },
+
+  // Gets All Items
+  getItems() {
+    fetch('http://localhost:9000/items')
+      .then(response => response.json())
+      .then(data => {
+        this.items = data;
+        console.log(data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  },
+
+  getUsers() {
+    fetch('http://localhost:9000/users')
+      .then(response => response.json())
+      .then(data => {
+        this.users = data;
+        console.log(data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  },
+
+  // Get Logged In User
+  getUser() {
+    fetch(`http://localhost:9000/users/token/${localStorage.getItem('authToken')}`)
+      .then(response => response.json())
+      .then(data => {
+        this.user = data;
+        console.log(data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  },
+
+  getLoans() {
+    fetch('http://localhost:9000/loans')
+      .then(response => response.json())
+      .then(data => {
+        this.loanedItems = data;
+        console.log(data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  },
+  
+  returnItem(loanId, loan) {
+    const newLoan = {
+      id: loan.id,
+      loanDate: loan.loanDate,
+      dueDate: loan.dueDate,
+      user: loan.user,
+      item: loan.item,
+      returned: true
+    }
+    
+    fetch(`http://localhost:9000/loans/return/${loanId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ loanId: loanId}),
+    })
+      .then(response => {
+        console.log(response);
+        if (response.ok) {
+          const index = this.loanedItems.findIndex(loan => loan.id === loanId);
+          console.log(index)
+          console.log(loan)
+          if (index !== -1) {
+            this.loanedItems.splice(index, 1, newLoan);
+          }
+          console.log("SUCCES" + response)
+          return response.text();
+          
+        } else {
+          throw new Error(response);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  },
+
+  // Delete Item
+  deleteItemModal(item) {
+    this.selectedDeleteItemId = item.id;
+    this.updatedItem = { ...item };
+    console.log(`${this.selectedDeleteItemId}`)
+  },
+    
+  deleteItem(itemId) {
+    console.log(itemId)
+    fetch(`http://localhost:9000/items/${itemId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+      .then(response => {
+        if (response.ok) {
+          const index = this.items.findIndex(item => item.id === itemId);
+          if (index !== -1) {
+            this.items.splice(index, 1);
+          }
+        } else {
+          console.error('Item deletion failed: Item may be Loaned Out');
+        }
+      }).catch(error => {
+        console.error(error);
+      });
+  },
+
+  cancelItemDelete() {
+    this.selectedDeleteItemId = null;
+  },
+
+  // Edit Item
+  editItem(item) {
+    this.selectedItemId = item.id;
+    this.updatedItem = { ...item };
+    console.log("response OK")
+  },
+
+  updateItem() {
+    fetch(`http://localhost:9000/items/update/${this.selectedItemId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(this.updatedItem)
+    })
+      .then(response => {
+        if (response.ok) {
+          console.log("response OK")
+          const index = this.items.findIndex(item => item.id === this.updatedItem.id);
+          if (index !== -1) {
+            this.items.splice(index, 1, this.updatedItem);
+          }
+          this.cancelItemUpdate();
+        } else {
+          console.error('Item update failed.');
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  },
+
+  cancelItemUpdate() {
+    this.selectedItemId = null;
+    this.updatedItem = {
+      id: null,
+      name: "",
+      description: "",
+      loanStatus: false
+    };
+
+  },
+
+  // Create Item
+  // Need to refresh page to be able to edit it. doenst have id yet so need to fetch again from back end.
+  createItem() {
+    const newItem = {
+      name: this.createdItem.name,
+      description: this.createdItem.description,
+      isLoanedOut: this.createdItem.isLoanedOut
+    }
+    fetch('http://localhost:9000/items', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newItem),
+    })
+      .then(response => {
+        if (response.ok) {
+          this.items.push(newItem);
+          console.log(`Item With ID & Name ${newItem.id} ${newItem.name} Created`)
+        } else {
+          throw new Error(`Could not create item. ${this.createdItem} `);
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  },
+
+  // DELETE USER
+  deleteUserModal(user){
+    this.selectedDeleteUserId = user.id;
+    this.updatedUser = { ...user };
+    console.log(`${this.selectedDeleteUserId}`)
+  },
+
+  deleteUser(userId) {
+    fetch(`http://localhost:9000/users/delete/${userId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ userId: userId }),
+    })
+      .then(response => {
+        console.log(`clicked ${userId}`)
+        if (response.ok) {
+          const index = this.users.findIndex(user => user.id === userId);
+          if (index !== -1) {
+            this.users.splice(index, 1);
+          }
+        } else {
+          console.error('User deletion failed');
+        }
+      }).catch(error => {
+        console.error(error);
+      });
+  },
+
+  cancelUserDelete() {
+    this.selectedDeleteUserId = null;
+  },
+
+  //USER EDIT
+  editUser(user) {
+    this.selectedUserId = user.id;
+    this.updatedUser = { ...user };
+    console.log(`${this.selectedUserId}`)
+  },
+
+  updateUser() {
+    fetch(`http://localhost:9000/users/update/${this.selectedUserId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(this.updatedUser)
+    })
+      .then(response => {
+        console.log("response OK")
+        if (response.ok) {
+          const index = this.users.findIndex(user => user.id === this.updatedUser.id);
+          if (index !== -1) {
+            this.users.splice(index, 1, this.updatedUser);
+            
+          }
+          this.cancelUserUpdate();
+        } else {
+          console.error('User update failed.');
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  },
+  
+  cancelUserUpdate() {
+    this.selectedUserId = null;
+    this.updatedUser = {
+      id: null,
+      username: "",
+      password: "",
+      email: "",
+      role: ""
+    };
+
+  },
+  
+  updateRole(userId) {
+    fetch(`http://localhost:9000/users/updateRole/${userId}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(this.updatedUser)
+    })
+      .then(response => {
+        if (response.ok) {
+          console.log("response OK")
+          const index = this.users.findIndex(user => user.id === this.updatedUser.id);
+          console.log(index)
+          if (index !== -1) {
+            this.users.splice(index, 1, this.updatedUser);
+          }
+          this.cancelUserUpdate();
+        } else {
+          console.error('Role change failed.');
+        }
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  },
+},
+
+updated() {
+
+}
 }
 
 
@@ -460,14 +410,12 @@ export default {
           <!-- Delete -->
           <div  v-if="item.id === selectedDeleteItemId" class="modal">
             <div class="modal-content">
-              <!-- Modal content goes here -->
               <h1>Are you sure you want to delete this item?</h1>
               <button class="modal-cancel-button" @click="cancelItemDelete()">Cancel</button>
               <button class="delete-button" @click="deleteItem(item.id)">Delete</button>
             </div>
           </div>
-          <!-- <button class="delete-button" @click="loanItem(user.id, item.id)">Lend Out</button> -->
-          <!-- <hr> -->
+
         </li>
       </ul>
     </div>
@@ -478,7 +426,7 @@ export default {
       <h2 class="clickable-title" @click="toggleAllUsers">Users overview</h2>
       <div v-show="showAllUsers">
       <ul>
-        <!-- eslint-disable-next-line vue/valid-v-for -->
+
         <li v-for="uniqueUser in users" :key="user">
           <div class="user-list">
             <div class="user-list-info">
@@ -496,7 +444,6 @@ export default {
 
           <div v-if="uniqueUser.id === selectedDeleteUserId" class="modal">
             <div class="modal-content">
-              <!-- Modal content goes here -->
               <h1>Are you sure you want to delete this user?</h1>
               <button class="modal-cancel-button" @click="cancelUserDelete()">Cancel</button>
               <button class="delete-button" @click="deleteUser(uniqueUser.id)">Delete</button>
@@ -518,7 +465,6 @@ export default {
               <button class="cancel-button" @click="cancelUserUpdate()">Cancel</button>
             </div>
           </div>
-          <!-- <hr> -->
         </li>
       </ul>
     </div>
@@ -550,7 +496,6 @@ export default {
 
             </div>
           </div>
-          <!-- <hr> -->
         </li>
       </ul>
     </div>
@@ -789,24 +734,6 @@ span {
   margin-left: 10px;
 }
 
-/* .save-button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 3px;
-  cursor: pointer;
-}
-
-.cancel-button {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 3px;
-  cursor: pointer;
-} */
-
 .unavailable {
   color: red;
   font-weight: bold;
@@ -823,11 +750,11 @@ span {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(255, 255, 255, 0.132); /* Semi-transparent background */
+  background-color: rgba(255, 255, 255, 0.132); 
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 9999; /* Adjust the z-index as needed */
+  z-index: 9999;
 }
 
 .modal-content {

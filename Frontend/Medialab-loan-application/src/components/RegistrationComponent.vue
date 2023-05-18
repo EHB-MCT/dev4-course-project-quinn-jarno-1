@@ -15,7 +15,7 @@
                 username: this.username,
                 password: this.password,
                 email: this.email,
-                role: this.role
+                role: "user"
             };
         fetch('http://localhost:9000/users', {
                 method: 'POST',
